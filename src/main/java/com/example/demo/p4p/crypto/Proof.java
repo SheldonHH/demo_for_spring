@@ -33,7 +33,7 @@ package com.example.demo.p4p.crypto;
 
 import java.math.BigInteger;
 
-import io.grpc.examples.p4p.p4p.util.P4PParameters;
+import com.example.demo.p4p.util.P4PParameters;
 
 /**
  *

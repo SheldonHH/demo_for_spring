@@ -1,6 +1,6 @@
 package com.example.demo.p4p.peer;
 
-import io.grpc.examples.p4p.net.i2p.util.NativeBigInteger;
+import com.example.demo.net.i2p.util.NativeBigInteger;
 
 public class P4PPeer {
     private NativeBigInteger g = null;

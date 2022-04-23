@@ -1,8 +1,8 @@
 package com.example.demo.p4p.server;
 
-import io.grpc.examples.p4p.net.i2p.util.NativeBigInteger;
-import io.grpc.examples.p4p.p4p.user.UserVector2;
-import io.grpc.examples.p4p.p4p.util.P4PParameters;
+import com.example.demo.net.i2p.util.NativeBigInteger;
+import com.example.demo.p4p.user.UserVector2;
+import com.example.demo.p4p.util.P4PParameters;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

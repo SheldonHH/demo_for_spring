@@ -3,10 +3,10 @@ package com.example.demo.p4p.crypto;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
-import io.grpc.examples.p4p.p4p.user.UserVector2;
-import io.grpc.examples.p4p.p4p.util.P4PParameters;
-import io.grpc.examples.p4p.p4p.util.Util;
-import io.grpc.examples.p4p.net.i2p.util.NativeBigInteger;
+import com.example.demo.p4p.user.UserVector2;
+import com.example.demo.p4p.util.P4PParameters;
+import com.example.demo.p4p.util.Util;
+import com.example.demo.net.i2p.util.NativeBigInteger;
 
 /**
  *

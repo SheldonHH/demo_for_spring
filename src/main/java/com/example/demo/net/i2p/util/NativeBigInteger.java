@@ -1,4 +1,4 @@
-package com.example.demo.p4p.util;
+package com.example.demo.net.i2p.util;
 /*
  * free (adj.): unencumbered; not under the control of others
  * Written by jrandom in 2003 and released into the public domain 
@@ -18,8 +18,8 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.File;
 
-import com.example.demo.freenet.support.CPUInformation.CPUID;
 import com.example.demo.freenet.support.CPUInformation.AMDCPUInfo;
+import com.example.demo.freenet.support.CPUInformation.CPUID;
 import com.example.demo.freenet.support.CPUInformation.CPUInfo;
 import com.example.demo.freenet.support.CPUInformation.IntelCPUInfo;
 import com.example.demo.freenet.support.CPUInformation.UnknownCPUException;

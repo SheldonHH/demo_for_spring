@@ -1,4 +1,4 @@
-package com.example.demo.p4p.util;
+package com.example.demo.net.i2p.util;
 
 /*
  * free (adj.): unencumbered; not under the control of others

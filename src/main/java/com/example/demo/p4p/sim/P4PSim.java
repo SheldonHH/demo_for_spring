@@ -42,14 +42,14 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Scanner; // Import the Scanner class to read text files
 
-import io.grpc.examples.p4p.p4p.user.UserVector2;
-import io.grpc.examples.p4p.p4p.util.P4PParameters;
-import io.grpc.examples.p4p.p4p.util.StopWatch;
-import io.grpc.examples.p4p.p4p.util.Util;
-import io.grpc.examples.p4p.net.i2p.util.NativeBigInteger;
+import com.example.demo.p4p.user.UserVector2;
+import com.example.demo.p4p.util.P4PParameters;
+import com.example.demo.p4p.util.StopWatch;
+import com.example.demo.p4p.util.Util;
+import com.example.demo.net.i2p.util.NativeBigInteger;
 
-import io.grpc.examples.p4p.p4p.peer.P4PPeer;
-import io.grpc.examples.p4p.p4p.server.P4PServer;
+import com.example.demo.p4p.peer.P4PPeer;
+import com.example.demo.p4p.server.P4PServer;
 
 /*
  * Providing a simulation framework for a P4P system. This allows one to debug

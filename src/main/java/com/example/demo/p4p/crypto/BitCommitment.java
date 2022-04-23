@@ -37,10 +37,10 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.security.GeneralSecurityException;
 
-import io.grpc.examples.p4p.p4p.util.P4PParameters;
-import io.grpc.examples.p4p.p4p.util.StopWatch;
-import io.grpc.examples.p4p.p4p.util.Util;
-import io.grpc.examples.p4p.net.i2p.util.NativeBigInteger;
+import com.example.demo.p4p.util.P4PParameters;
+import com.example.demo.p4p.util.StopWatch;
+import com.example.demo.p4p.util.Util;
+import com.example.demo.net.i2p.util.NativeBigInteger;
 
 /**
  * This is a bit commitment. It only allows committing to the value of either 0

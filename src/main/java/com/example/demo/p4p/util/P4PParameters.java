@@ -34,7 +34,7 @@ package com.example.demo.p4p.util;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
-import io.grpc.examples.p4p.net.i2p.util.NativeBigInteger;
+import com.example.demo.net.i2p.util.NativeBigInteger;
 
 /**
  * P4P's system parameters. All other classes should extend this class 

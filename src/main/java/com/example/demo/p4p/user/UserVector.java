@@ -36,13 +36,13 @@ import java.security.SecureRandom;
 import java.util.Vector;
 
 
-import io.grpc.examples.p4p.p4p.util.P4PParameters;
-import io.grpc.examples.p4p.p4p.util.StopWatch;
-import io.grpc.examples.p4p.p4p.util.Util;
-import io.grpc.examples.p4p.net.i2p.util.NativeBigInteger;
+import com.example.demo.p4p.util.P4PParameters;
+import com.example.demo.p4p.util.StopWatch;
+import com.example.demo.p4p.util.Util;
+import com.example.demo.net.i2p.util.NativeBigInteger;
 
-import io.grpc.examples.p4p.p4p.crypto.Proof;
-import io.grpc.examples.p4p.p4p.crypto.BitVectorCommitment;
+import com.example.demo.p4p.crypto.Proof;
+import com.example.demo.p4p.crypto.BitVectorCommitment;
 
 /**
  * Changes:
