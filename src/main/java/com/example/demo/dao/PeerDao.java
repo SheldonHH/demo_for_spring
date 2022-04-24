@@ -1,6 +1,8 @@
 package com.example.demo.dao;
 
 import com.example.demo.model.Person;
+import com.example.demo.model.RCVisTuple;
+import com.example.demo.model.RowColHash;
 import com.example.demo.p4p.user.UserVector2;
 
 import java.math.BigInteger;
@@ -10,9 +12,9 @@ import java.util.UUID;
 
 // dependency injection
 public interface PeerDao {
-    int insertViandProof(UUID id, long[] vi, UserVector2.L2NormBoundProof2 peerProof);
-    int insertHashMatrix(UUID id, BigInteger[][] hash);
-
+    int insertViandProof(UUID userid, UUID id, long[] vi, UserVector2.L2NormBoundProof2 peerProof);
+    int insertVHashMatrix(UUID id, long[][]vi, RowColHash rowColHash);
+    int hashVerifywithReceiveRquestRCVisTuple(UUID uid, RCVisTuple rcVisTuple);
 //    default int insertVi(Person person){
 //        UUID id = UUID.randomUUID();
 //        return insertVi(id, person);

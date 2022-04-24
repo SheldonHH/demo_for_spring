@@ -20,6 +20,16 @@ public class PersonController {
     }
 
     @PostMapping
+    public void requestVifromSQMatrix(@Valid @NonNull @RequestBody UUID serverid, int row, int col){
+        personService.requestVifromSQMatrix(row, col);
+    }
+
+    @PostMapping
+    public void requestSumandCountforUnit(@Valid @NonNull @RequestBody int x1, int x2){
+        personService.requestSumandCountforUnit(x1, x2);
+    }
+
+    @PostMapping
     public void addPerson(@Valid @NonNull @RequestBody Person person){
         personService.addPerson(person);
     }

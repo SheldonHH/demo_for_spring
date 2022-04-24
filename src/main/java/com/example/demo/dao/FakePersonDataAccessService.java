@@ -1,6 +1,7 @@
 package com.example.demo.dao;
 
 import com.example.demo.model.Person;
+import com.example.demo.model.RCVisTuple;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -16,6 +17,21 @@ public class FakePersonDataAccessService implements PersonDao{
     public int insertPerson(UUID id, Person person){
         DB.add(new Person(id, person.getName()));
         return 1;
+    }
+
+    @Override
+    public int insertPerson(Person person) {
+        return PersonDao.super.insertPerson(person);
+    }
+
+    @Override
+    public RCVisTuple requestVifromSQMatrix(int row, int col) {
+        return null;
+    }
+
+    @Override
+    public long[] requestSumandCountforUnit(int x1, int x2) {
+        return new long[0];
     }
 
     @Override

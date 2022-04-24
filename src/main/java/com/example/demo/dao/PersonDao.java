@@ -1,13 +1,15 @@
 package com.example.demo.dao;
 
 import com.example.demo.model.Person;
+import com.example.demo.model.RCVisTuple;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 // dependency injection
-public interface PersonDao {
+public interface
+PersonDao {
     int insertPerson(UUID id, Person person);
 
     default int insertPerson(Person person){
@@ -16,6 +18,8 @@ public interface PersonDao {
     }
     // return zero or one depends on whether data is persisted
 
+    RCVisTuple requestVifromSQMatrix(int row, int col);
+    long[] requestSumandCountforUnit(int x1, int x2);
     List<Person> selectAllPeople();
 
     Optional<Person> selectPersonById(UUID id);
