@@ -1,9 +1,18 @@
 # demo_for_spring
 
+
+### Q1
+
+### S
+
 ### Question: docker: Error response from daemon: Ports are not available: listen tcp 0.0.0.0:5432: bind: address already in use.
 
 ### Soultion: `sudo lsof -i tcp:5432`
 
+```
+docker run  -d --name openjdk -it openjdk /bin/bash
+docker exec -it $(docker ps | grep -E 'openjdk' | awk '{print $1}') /bin/bash
+```
 API Layer / Controller Layer
 Service Layer
 Data Access Layer

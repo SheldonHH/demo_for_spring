@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository("postgres")
+@Repository("postgres1")
 public class PeerDataAccessService implements PeerDao{
     private static List<Person> DB = new ArrayList<>();
 
@@ -25,7 +25,7 @@ public class PeerDataAccessService implements PeerDao{
     }
 
     @Override
-    public long sumViforPerson(Person person) {
+    public long sumVi(Person person) {
         return 0;
     }
 

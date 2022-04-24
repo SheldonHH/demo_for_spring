@@ -17,7 +17,7 @@ public class PeerService {
     private final PeerDao peerDao;
 
     @Autowired
-    public PeerService(@Qualifier("postgres") PeerDao peerDao){
+    public PeerService(@Qualifier("postgres1") PeerDao peerDao){
         this.peerDao = peerDao;
     }
     public int insertViandProof(UUID id, long[] vi, UserVector2.L2NormBoundProof2 peerProof){
