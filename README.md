@@ -3,6 +3,15 @@
 
 ### Q1
 
+org.springframework.beans.factory.BeanCreationException:
+
+Error creating bean with name 'flywayInitializer' defined in class path resource 
+[org/springframework/boot/autoconfigure/flyway/FlywayAutoConfiguration$FlywayConfiguration.class]
+: Invocation of init method failed; 
+nested exception is java.lang.RuntimeException: 
+Failed to get driver instance for 
+jdbcUrl=jdbc:postgresql://localhost:5432/spring-boot-postgres-db/demodb
+
 ### S
 
 ### Question: docker: Error response from daemon: Ports are not available: listen tcp 0.0.0.0:5432: bind: address already in use.
@@ -28,8 +37,24 @@ docker stop  $(docker ps -a | grep -E 'postgres-spring' | awk '{print $1}' | awk
 docker run --name postgres-spring -e POSTGRES_PASSWORD=password -d -p 5432:5432 postgres:alpine
 docker exec -it $(docker ps | grep -E 'postgres-spring' | awk '{print $1}') /bin/bash
 
-docker port postgres-spring
-psql
+docker port demodb
+psql 
+```
+
+```
+psql -U postgres
+create database postgres-spring;
+create database spring-boot-postgres-db;
+\l
+
+\c registration
+\dt
+SELECT * FROM app_user;
+drop table app_user, confirmation_token;
+
+UPDATE app_user SET enabled=TRUE WHERE EMAIL='sg@gmail.com';
+UPDATE app_user SET enabled=TRUE WHERE EMAIL='hellow@gmail.com';
+
 ```
 
 JDBC: Java Database Connectivity (JDBC)
