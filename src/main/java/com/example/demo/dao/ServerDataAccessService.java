@@ -24,11 +24,6 @@ public class ServerDataAccessService implements ServerDao{
     }
 
     @Override
-    public int insertSumandCountofDi(UUID userid, UUID id, long d_i_sum, long count) {
-        return 0;
-    }
-
-    @Override
     public int insertVSum(UUID peerID, long[] v) {
         return 0;
     }

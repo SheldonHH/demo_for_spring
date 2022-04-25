@@ -15,8 +15,6 @@ public interface ServerDao {
 
     int insertGaussParamsandSampleRange(UUID userid, UUID id, long[] gaussian_params, long[][]xy);
 
-    int insertSumandCountofDi(UUID userid, UUID id, long d_i_sum, long count);
-
     int insertVSum(UUID peerID, long[] v);
 
     int distanceofReceiveRquestSumCount(UUID uid, long[] di_sample_sum, long sample_count);

@@ -25,17 +25,17 @@ public class PeerController {
     }
 
 
-    @PostMapping
+    @PostMapping("/viandproof")
     public void addViandProof(@Valid @NonNull @RequestBody UUID userid, UUID id, long[] vi, UserVector2.L2NormBoundProof2 peerProof){
         peerService.addViandProof(userid, id,  vi,  peerProof);
     }
 
-    @PostMapping
+    @PostMapping("/vhashmatrix")
     public void addVHashMatrix(@Valid @NonNull @RequestBody UUID userid, long[][] v_matrix, RowColHash sg){
         peerService.addVHashMatrix(userid, v_matrix, sg);
     }
 
-    @PostMapping
+    @PostMapping("/rcvituples")
     public void sendRquestRCVisTuple (@Valid @NonNull @RequestBody UUID userid,  RCVisTuple requestedVisTuple){
         peerService.hashVerifywithReceiveRquestRCVisTuple(userid, requestedVisTuple);
     }

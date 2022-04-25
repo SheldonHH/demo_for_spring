@@ -24,7 +24,7 @@ public class Peer {
         return name;
     }
 }
-// localhost:8080/api/v1/person
+// localhost:8080/api/v1/peer
 
 /*
  * {

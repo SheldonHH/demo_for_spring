@@ -19,13 +19,13 @@ public class PersonController {
         this.personService = personService;
     }
 
-    @PostMapping
-    public void requestVifromSQMatrix(@Valid @NonNull @RequestBody UUID serverid, int row, int col){
+    @PostMapping("/requestrc") //peerID
+    public void requestVifromSQMatrix(@Valid @NonNull @RequestBody UUID peerId, int row, int col){
         personService.requestVifromSQMatrix(row, col);
     }
 
-    @PostMapping
-    public void requestSumandCountforUnit(@Valid @NonNull @RequestBody int x1, int x2){
+    @PostMapping("/sumCountforUnit") //serverID
+    public void requestSumandCountforUnit(@Valid @NonNull @RequestBody UUID serverID, int x1, int x2){
         personService.requestSumandCountforUnit(x1, x2);
     }
 
@@ -39,7 +39,7 @@ public class PersonController {
         return personService.getAllPeople();
     }
 
-    // localhost:8080/api/v1/person/_______
+    // localhost:8080/api/v1/person/
     @GetMapping(path = "{id}")
     public  Person getPersonById(UUID id){
         return personService.getPersonById(id)

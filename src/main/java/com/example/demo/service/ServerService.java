@@ -19,7 +19,7 @@ public class ServerService {
     private final ServerDao serverDao;
 
     @Autowired
-    public ServerService(ServerDao serverDao, @Qualifier("postgres0") PersonDao personDao) {
+    public ServerService( @Qualifier("postgres0") ServerDao serverDao) {
         this.serverDao = serverDao;
     }
 
@@ -29,9 +29,6 @@ public class ServerService {
 
     public int insertGaussParamsandSampleRange( UUID userid, UUID id, long[] gaussian_params, long[][]xy){
         return serverDao.insertGaussParamsandSampleRange(userid, id, gaussian_params, xy);
-    }
-    public int insertSumandCountofDi( UUID userid, UUID id, long d_i_sum, long count){
-        return serverDao.insertSumandCountofDi(userid, id,  d_i_sum,  count);
     }
 
     public int insertVSum( UUID peerID, long[] v_sum){
