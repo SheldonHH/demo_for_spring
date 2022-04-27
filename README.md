@@ -21,6 +21,7 @@ jdbcUrl=jdbc:postgresql://localhost:5432/spring-boot-postgres-db/demodb
 ```
 docker run  -d --name openjdk -it openjdk /bin/bash
 docker exec -it $(docker ps | grep -E 'openjdk' | awk '{print $1}') /bin/bash
+\l
 ```
 API Layer / Controller Layer
 Service Layer
@@ -72,13 +73,13 @@ you need to use a properties file.
 
 As per my knowledge, these are at least some of the differences:
 
-1. .properties stores data in sequential format, whereas
+1. `.properties` stores data in sequential format, whereas
 .yml stores data in hierarchical format.
-2 .properties supports only key-value pairs (basically string values), whereas
+2 `.properties` supports only key-value pairs (basically string values), whereas
 .yml supports key-value pair, as well as map, list & scalar type values.
-3 .properties is specifically used by Java, whereas
+3 `.properties` is specifically used by Java, whereas
 .yml can be used by other languages (eg Java, Python, ROR, etc).
 4 When managing multiple configuration profiles, then:
-.properties requires you to create .properties file per every profile, whereas in
-.yml you can create a section for each specific profile inside a single .yml file.
-2. In Spring projects, @PropertySource annotation can only be used with .properties.
+   `.properties` requires you to create .properties file per every profile, whereas in
+`.yml` you can create a section for each specific profile inside a single `.yml` file.
+2. In Spring projects, @PropertySource annotation can only be used with `.properties`.
