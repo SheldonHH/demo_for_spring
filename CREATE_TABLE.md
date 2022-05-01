@@ -26,8 +26,6 @@ CREATE DATABASE client4 WITH ENCODING = 'UTF8' OWNER = client4;
 
 ALTER ROLE "client1" WITH LOGIN;
 
-CREATE DATABASE sales;
-
 \connect demodb
 \dt
 CREATE TABLE SUSERDATA (
@@ -38,18 +36,25 @@ CREATE TABLE SUSERDATA (
 	created_on TIMESTAMP NOT NULL,
         last_login TIMESTAMP 
 );
+ALTER ROLE "server1" WITH LOGIN;
 
 
-create database ROLE
 
+\c server1
+\c server2
+\c peer1
+\c peer2
 DROP TABLE PERSON;
 CREATE TABLE PERSON (
 	person_id UUID PRIMARY KEY,
 	name VARCHAR ( 50 ) UNIQUE NOT NULL
 );
 
+
+
 \c server1
-DROP TABLE U_PERSON_DATA;
+\c server2
+DROP TABLE IF EXISTS U_PERSON_DATA; 
 CREATE TABLE U_PERSON_DATA (
 	data_id UUID PRIMARY KEY,
 	name VARCHAR ( 50 ) UNIQUE NOT NULL,
@@ -57,7 +62,18 @@ CREATE TABLE U_PERSON_DATA (
 	u2 integer[],
 	verified boolean	
 );
+DROP TABLE IF EXISTS GAUSS_UNIT;
+CREATE TABLE GAUSS_UNIT (
+	unit_id UUID PRIMARY KEY,
+	name VARCHAR ( 50 ) UNIQUE NOT NULL,
+	x integer,
+	y integer	
+);
 
+
+
+\c peer1
+\c peer2
 DROP TABLE V_PERSON_DATA;
 CREATE TABLE V_PERSON_DATA (
 	data_id UUID PRIMARY KEY,
@@ -66,6 +82,15 @@ CREATE TABLE V_PERSON_DATA (
 	v2 integer[],
 	verified boolean	
 );
+DROP TABLE V_HashMatrix;
+CREATE TABLE V_HashMatrix (
+	data_id UUID PRIMARY KEY,
+	name VARCHAR ( 50 ) UNIQUE NOT NULL,
+	rcType VARCHAR ( 50 ) UNIQUE NOT NULL,
+	index_num integer,
+	index_Hash bigint[]
+);
+
 
 
 

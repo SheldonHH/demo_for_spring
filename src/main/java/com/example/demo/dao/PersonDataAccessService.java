@@ -31,13 +31,13 @@ public class PersonDataAccessService implements PersonDao{
                      Statement.RETURN_GENERATED_KEYS)) {
 
             pstmt.setObject (1, person_uuid);
-
             pstmt.setString(2, person.getName());
             int affectedRows = pstmt.executeUpdate();
             // check the affected rows
             if (affectedRows > 0) {
                 // get the ID back
                 try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                    System.out.println(rs);
 //                    if (rs.next()) {
 ////                        id = rs.getLong(1);
 //                    }
@@ -67,7 +67,24 @@ public class PersonDataAccessService implements PersonDao{
 
     @Override
     public List<Person> selectAllPeople(){
-        return List.of(new Person(UUID.randomUUID(), " SELECT FROM POSTGRES DB"));
+        List<Person> personList = new ArrayList<>();
+        try (Connection con = DriverManager.getConnection(url, user, password);
+             Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery("SELECT * from PERSON")) {
+            while(rs.next()){
+                UUID person_id = (UUID) rs.getObject("person_id");
+                String username = rs.getString("name");
+                personList.add(new Person(person_id,username));
+            }
+            if (rs.next()) {
+                System.out.println(rs.getString(1));
+            }
+
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return personList;
+//        return List.of(new Person(UUID.randomUUID(), " SELECT FROM POSTGRES DB"));
     }
 //  List.of()  Returns an immutable list containing zero elements.
 
