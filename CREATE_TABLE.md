@@ -1,8 +1,12 @@
+`\conninfo`
+
 ```
 create user client1 with encrypted password '1';
 create user client2 with encrypted password '2';
 create user client3 with encrypted password '3';
 create user client4 with encrypted password '4';
+
+
 
 CREATE ROLE server1;
 CREATE DATABASE server1 WITH ENCODING = 'UTF8' OWNER = server1;
@@ -23,6 +27,14 @@ CREATE DATABASE client3 WITH ENCODING = 'UTF8' OWNER = client3;
 CREATE ROLE client4;
 CREATE DATABASE client4 WITH ENCODING = 'UTF8' OWNER = client4;
 
+ALTER ROLE "server1" WITH LOGIN;
+ALTER ROLE "server2" WITH LOGIN;
+ALTER ROLE "peer1" WITH LOGIN;
+ALTER ROLE "peer2" WITH LOGIN;
+ALTER ROLE "client1" WITH LOGIN;
+ALTER ROLE "client2" WITH LOGIN;
+ALTER ROLE "client3" WITH LOGIN;
+ALTER ROLE "client4" WITH LOGIN;
 
 ALTER ROLE "client1" WITH LOGIN;
 
