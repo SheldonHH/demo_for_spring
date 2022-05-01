@@ -275,6 +275,7 @@ public class UserVector2 extends UserVector implements Serializable{
      * this so that the privacy peer shares more work.
      */
 
+//    https://stackoverflow.com/questions/15331846/non-static-variable-this-cannot-be-referenced-from-a-static-context-when-creat
     public static class L2NormBoundProof2 extends Proof implements Serializable {
 
         private static final long serialVersionUID = 6529685098267757690L;
