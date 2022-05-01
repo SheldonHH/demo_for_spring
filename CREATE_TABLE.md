@@ -6,8 +6,6 @@ create user client2 with encrypted password '2';
 create user client3 with encrypted password '3';
 create user client4 with encrypted password '4';
 
-
-
 CREATE ROLE server1;
 CREATE DATABASE server1 WITH ENCODING = 'UTF8' OWNER = server1;
 CREATE ROLE server2;
@@ -36,32 +34,38 @@ ALTER ROLE "client2" WITH LOGIN;
 ALTER ROLE "client3" WITH LOGIN;
 ALTER ROLE "client4" WITH LOGIN;
 
-ALTER ROLE "client1" WITH LOGIN;
+ALTER ROLE server1 WITH PASSWORD 'password';
+ALTER ROLE server2 WITH PASSWORD 'password';
+ALTER ROLE peer1 WITH PASSWORD 'password';
+ALTER ROLE peer2 WITH PASSWORD 'password';
+ALTER ROLE client1 WITH PASSWORD 'password';
+ALTER ROLE client2 WITH PASSWORD 'password';
+ALTER ROLE client3 WITH PASSWORD 'password';
+ALTER ROLE client4 WITH PASSWORD 'password';
+
+
+
 
 \connect demodb
 \dt
-CREATE TABLE SUSERDATA (
-	data_id serial PRIMARY KEY,
-	username VARCHAR ( 50 ) UNIQUE NOT NULL,
-    u1 INTEGER NOT NULL,
-    u2 INTEGER NOT NULL,
-	created_on TIMESTAMP NOT NULL,
-        last_login TIMESTAMP 
-);
-ALTER ROLE "server1" WITH LOGIN;
 
-
-
-\c server1
-\c server2
 \c peer1
+ALTER TABLE public.flyway_schema_history OWNER TO peer1;
 \c peer2
+ALTER TABLE public.flyway_schema_history OWNER TO peer2;
+\c server1
+ALTER TABLE public.flyway_schema_history OWNER TO server1;
+\c server2
+ALTER TABLE public.flyway_schema_history OWNER TO server2;
+
+
 DROP TABLE PERSON;
 CREATE TABLE PERSON (
 	person_id UUID PRIMARY KEY,
 	name VARCHAR ( 50 ) UNIQUE NOT NULL
 );
-
+ALTER TABLE public.gauss_unit OWNER TO peer1;
+ALTER TABLE public.u_person_data OWNER TO server2;
 
 
 \c server1
@@ -70,8 +74,8 @@ DROP TABLE IF EXISTS U_PERSON_DATA;
 CREATE TABLE U_PERSON_DATA (
 	data_id UUID PRIMARY KEY,
 	name VARCHAR ( 50 ) UNIQUE NOT NULL,
-	u1 integer[],
-	u2 integer[],
+	u1 bigint[],
+	u2 bigint[],
 	verified boolean	
 );
 DROP TABLE IF EXISTS GAUSS_UNIT;
@@ -90,8 +94,8 @@ DROP TABLE V_PERSON_DATA;
 CREATE TABLE V_PERSON_DATA (
 	data_id UUID PRIMARY KEY,
 	name VARCHAR ( 50 ) UNIQUE NOT NULL,
-	v1 integer[],
-	v2 integer[],
+	v1 bigint[],
+	v2 bigint[],
 	verified boolean	
 );
 DROP TABLE V_HashMatrix;
@@ -102,6 +106,14 @@ CREATE TABLE V_HashMatrix (
 	index_num integer,
 	index_Hash bigint[]
 );
+
+ALTER TABLE public.v_hashmatrix OWNER TO peer2;
+ALTER TABLE public.v_person_data OWNER TO peer2;
+ALTER TABLE public.person OWNER TO peer2;
+
+
+
+
 
 
 
@@ -144,3 +156,16 @@ SELECT * FROM schema.tables WHERE table_schema = 'singapore';
 
 
 
+
+
+
+```aidl
+CREATE TABLE SUSERDATA (
+	data_id serial PRIMARY KEY,
+	username VARCHAR ( 50 ) UNIQUE NOT NULL,
+    u1 INTEGER NOT NULL,
+    u2 INTEGER NOT NULL,
+	created_on TIMESTAMP NOT NULL,
+        last_login TIMESTAMP 
+);
+```
