@@ -7,12 +7,6 @@ public class P_SumandCountforUnit {
     int x1;
     int x2;
 
-    public P_SumandCountforUnit(UUID serverID, int x1, int x2) {
-        this.serverID = serverID;
-        this.x1 = x1;
-        this.x2 = x2;
-    }
-
     public UUID getServerID() {
         return serverID;
     }
@@ -34,6 +28,12 @@ public class P_SumandCountforUnit {
     }
 
     public void setX2(int x2) {
+        this.x2 = x2;
+    }
+
+    public P_SumandCountforUnit(UUID serverID, int x1, int x2) {
+        this.serverID = serverID;
+        this.x1 = x1;
         this.x2 = x2;
     }
 }

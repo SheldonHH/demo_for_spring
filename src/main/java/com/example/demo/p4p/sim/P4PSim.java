@@ -41,7 +41,9 @@ import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Scanner; // Import the Scanner class to read text files
+import java.util.UUID;
 
+import com.example.demo.model.UiandProof;
 import com.example.demo.p4p.user.UserVector2;
 import com.example.demo.p4p.util.P4PParameters;
 import com.example.demo.p4p.util.StopWatch;
@@ -50,6 +52,20 @@ import com.example.demo.net.i2p.util.NativeBigInteger;
 
 import com.example.demo.p4p.peer.P4PPeer;
 import com.example.demo.p4p.server.P4PServer;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 /*
  * Providing a simulation framework for a P4P system. This allows one to debug
@@ -67,10 +83,12 @@ public class P4PSim extends P4PParameters {
     private static int m = 10000;      // User vector dimension
     private static int n = 1;      // Number of users
     private static int l = 40;      // Bit length of L
+    final static CloseableHttpClient httpClient = HttpClients.createDefault();
 
     /* Start a simulation.
      */
     public static void main(String[] args) {
+        UUID userid = UUID.fromString("1fa4fd06-34f0-49a4-baf9-a4073bca0292");
         int nLoops = 1;
         boolean doBench = false;
         boolean worstcase = false;
@@ -232,6 +250,9 @@ public class P4PSim extends P4PParameters {
                             Socket socketConnection = new Socket("127.0.0.1", 8800);
                             DataOutputStream outToServer = new DataOutputStream(socketConnection.getOutputStream());
                             System.out.println(uv.getU());
+
+
+
                             outToServer.writeUTF(Arrays.toString(uv.getV()));
 
                             Socket socketConnection_peer = new Socket("127.0.0.1", 8801);
@@ -266,16 +287,32 @@ public class P4PSim extends P4PParameters {
 //                        Gson gson = builder.create();
 //                        UserVector2.L2NormBoundProof2 serverProof_gou = gson.fromJson(jsonString, UserVector2.L2NormBoundProof2.class);
 //                        String jsonString_serverProof = gson.toJson(serverProof);
-                        try {
-                            Socket socketConnection = new Socket("127.0.0.1", 8880);
-                            ObjectOutputStream outToServer1 = new ObjectOutputStream(socketConnection.getOutputStream());
-                            outToServer1.writeObject(serverProof);
-                        } catch (Exception e) {
-                            System.out.println(e);
-                        }
+//                        try {
+//                            Socket socketConnection = new Socket("127.0.0.1", 8880);
+//                            ObjectOutputStream outToServer1 = new ObjectOutputStream(socketConnection.getOutputStream());
+//                            outToServer1.writeObject(serverProof);
+//                        } catch (Exception e) {
+//                            System.out.println(e);
+//                        }
 //                        Gson gson = new Gson();
 //                        String json_serverProof = gson.toJson(serverProof);
                         server.setProof(i, serverProof);
+
+                        HttpPost request = new HttpPost("http://localhost:8080/api/v1/server/uiandproof");
+                        UiandProof uiandProof = new UiandProof(userid, uv.getU(),serverProof);
+
+
+                        ObjectMapper mapper = new ObjectMapper();
+                        mapper.configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false);
+                        StringEntity json = new StringEntity(mapper.writeValueAsString(uiandProof), ContentType.APPLICATION_JSON);
+//
+                        request.setEntity(json);
+
+                        CloseableHttpResponse response = httpClient.execute(request);
+
+                        if(response.getStatusLine().getStatusCode() != 200){
+                            System.out.println("Student is not added! "+response.getStatusLine().getStatusCode() );
+                        }
 
 //  3️⃣. The peer:
                         long[] vv = uv.getV();
@@ -373,6 +410,12 @@ public class P4PSim extends P4PParameters {
 
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred.");
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
