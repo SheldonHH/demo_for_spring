@@ -20,6 +20,8 @@ public class PersonDataAccessService implements PersonDao{
     }
 
     private static List<Person> DB = new ArrayList<>();
+
+//    https://www.postgresqltutorial.com/postgresql-jdbc/insert/
     @Override
     public int insertPerson(UUID person_uuid, Person person){
         String SQL = "INSERT INTO PERSON(person_id,name) "

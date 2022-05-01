@@ -1,4 +1,33 @@
 ```
+create user client1 with encrypted password '1';
+create user client2 with encrypted password '2';
+create user client3 with encrypted password '3';
+create user client4 with encrypted password '4';
+
+CREATE ROLE server1;
+CREATE DATABASE server1 WITH ENCODING = 'UTF8' OWNER = server1;
+CREATE ROLE server2;
+CREATE DATABASE server2 WITH ENCODING = 'UTF8' OWNER = server2;
+
+CREATE ROLE peer1;
+CREATE DATABASE peer1 WITH ENCODING = 'UTF8' OWNER = peer1;
+CREATE ROLE peer2;
+CREATE DATABASE peer2 WITH ENCODING = 'UTF8' OWNER = peer2;
+
+CREATE ROLE client1;
+CREATE DATABASE client1 WITH ENCODING = 'UTF8' OWNER = client1;
+CREATE ROLE client2;
+CREATE DATABASE client2 WITH ENCODING = 'UTF8' OWNER = client2;
+CREATE ROLE client3;
+CREATE DATABASE client3 WITH ENCODING = 'UTF8' OWNER = client3;
+CREATE ROLE client4;
+CREATE DATABASE client4 WITH ENCODING = 'UTF8' OWNER = client4;
+
+
+ALTER ROLE "client1" WITH LOGIN;
+
+CREATE DATABASE sales;
+
 \connect demodb
 \dt
 CREATE TABLE SUSERDATA (
@@ -10,11 +39,38 @@ CREATE TABLE SUSERDATA (
         last_login TIMESTAMP 
 );
 
+
+create database ROLE
+
 DROP TABLE PERSON;
 CREATE TABLE PERSON (
 	person_id UUID PRIMARY KEY,
 	name VARCHAR ( 50 ) UNIQUE NOT NULL
 );
+
+\c server1
+DROP TABLE U_PERSON_DATA;
+CREATE TABLE U_PERSON_DATA (
+	data_id UUID PRIMARY KEY,
+	name VARCHAR ( 50 ) UNIQUE NOT NULL,
+	u1 integer[],
+	u2 integer[],
+	verified boolean	
+);
+
+DROP TABLE V_PERSON_DATA;
+CREATE TABLE V_PERSON_DATA (
+	data_id UUID PRIMARY KEY,
+	name VARCHAR ( 50 ) UNIQUE NOT NULL,
+	v1 integer[],
+	v2 integer[],
+	verified boolean	
+);
+
+
+
+# https://www.postgresqltutorial.com/postgresql-administration/postgresql-create-database/
+CREATE DATABASE 
 
 grant connect ON DATABSE PEER1_DB to peer1;
 grant connect ON DATABSE PEER2_DB to peer2;
