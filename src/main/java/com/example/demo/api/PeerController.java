@@ -1,8 +1,6 @@
 package com.example.demo.api;
 
-import com.example.demo.model.Person;
-import com.example.demo.model.RCVisTuple;
-import com.example.demo.model.RowColHash;
+import com.example.demo.model.*;
 import com.example.demo.p4p.user.UserVector2;
 import com.example.demo.service.PeerService;
 import com.example.demo.service.PersonService;
@@ -26,18 +24,18 @@ public class PeerController {
 
 
     @PostMapping("/viandproof")
-    public void addViandProof(@Valid @NonNull @RequestBody UUID userid, UUID id, long[] vi, UserVector2.L2NormBoundProof2 peerProof){
-        peerService.addViandProof(userid, id,  vi,  peerProof);
+    public void addViandProof(@Valid @NonNull @RequestBody ViandProof viandProof){
+        peerService.addViandProof(viandProof);
     }
 
     @PostMapping("/vhashmatrix")
-    public void addVHashMatrix(@Valid @NonNull @RequestBody UUID userid, long[][] v_matrix, RowColHash sg){
-        peerService.addVHashMatrix(userid, v_matrix, sg);
+    public void addVHashMatrix(@Valid @NonNull @RequestBody VHashMatrix vHashMatrix){
+        peerService.addVHashMatrix(vHashMatrix);
     }
 
     @PostMapping("/rcvituples")
-    public void sendRquestRCVisTuple (@Valid @NonNull @RequestBody UUID userid,  RCVisTuple requestedVisTuple){
-        peerService.hashVerifywithReceiveRquestRCVisTuple(userid, requestedVisTuple);
+    public void sendRquestRCVisTuple (@Valid @NonNull @RequestBody RCVisTupleUser rcVisTupleUser){
+        peerService.hashVerifywithReceiveRquestRCVisTuple(rcVisTupleUser);
     }
 
 

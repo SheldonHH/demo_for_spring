@@ -1,7 +1,6 @@
 package com.example.demo.dao;
 
-import com.example.demo.model.Person;
-import com.example.demo.model.RowColHash;
+import com.example.demo.model.*;
 import com.example.demo.p4p.user.UserVector2;
 import org.springframework.stereotype.Repository;
 
@@ -14,22 +13,23 @@ public class ServerDataAccessService implements ServerDao{
     private static List<Person> DB = new ArrayList<>();
 
     @Override
-    public int insertUiandProof(UUID userid, UUID id, long[] ui, UserVector2.L2NormBoundProof2 serverProof) {
+    public int insertUiandProof(UiandProof uiandProof) {
         return 0;
     }
 
     @Override
-    public int insertGaussParamsandSampleRange(UUID userid, UUID id, long[] gaussian_params, long[][] xy) {
+    public int insertGaussParamsandSampleRange(GaussParamsandSampleRange gaussian_params) {
         return 0;
     }
 
     @Override
-    public int insertVSum(UUID peerID, long[] v) {
+    public int insertVSum(VSum vSum) {
         return 0;
     }
 
+
     @Override
-    public int distanceofReceiveRquestSumCount(UUID uid, long[] di_sample_sum, long sample_count) {
+    public int distanceofReceiveRquestSumCount(SampleSumandCount sampleSumandCount) {
         return 0;
     }
 

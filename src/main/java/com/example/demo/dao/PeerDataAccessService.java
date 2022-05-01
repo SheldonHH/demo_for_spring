@@ -1,8 +1,6 @@
 package com.example.demo.dao;
 
-import com.example.demo.model.Person;
-import com.example.demo.model.RCVisTuple;
-import com.example.demo.model.RowColHash;
+import com.example.demo.model.*;
 import com.example.demo.p4p.user.UserVector2;
 import org.springframework.stereotype.Repository;
 
@@ -17,18 +15,21 @@ public class PeerDataAccessService implements PeerDao{
     private static List<Person> DB = new ArrayList<>();
 
     @Override
-    public int insertViandProof(UUID userid, UUID id, long[] vi, UserVector2.L2NormBoundProof2 peerProof) {
+    public int insertViandProof(ViandProof viandProof)
+    {
         return 0;
     }
 
     @Override
-    public int insertVHashMatrix(UUID id, long[][] vi, RowColHash rowColHash) {
+    public int insertVHashMatrix(VHashMatrix vHashMatrix) {
 
         return 0;
     }
 
     @Override
-    public int hashVerifywithReceiveRquestRCVisTuple(UUID uid, RCVisTuple rcVisTuple) {
+    public int hashVerifywithReceiveRquestRCVisTuple(RCVisTupleUser rcVisTupleUser) {
+//        UUID userID = rcVisTupleUser.getUserid();
+
         return 0;
     }
 

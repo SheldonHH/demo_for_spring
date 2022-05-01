@@ -1,8 +1,6 @@
 package com.example.demo.dao;
 
-import com.example.demo.model.GaussianUnitTuple;
-import com.example.demo.model.Person;
-import com.example.demo.model.RCVisTuple;
+import com.example.demo.model.*;
 import com.example.demo.p4p.user.UserVector2;
 
 import java.math.BigInteger;
@@ -11,13 +9,13 @@ import java.util.UUID;
 
 // dependency injection
 public interface ServerDao {
-    int insertUiandProof(UUID userid, UUID id, long[] ui, UserVector2.L2NormBoundProof2 serverProof);
+    int insertUiandProof(UiandProof uniandproof);
 
-    int insertGaussParamsandSampleRange(UUID userid, UUID id, long[] gaussian_params, long[][]xy);
+    int insertGaussParamsandSampleRange(GaussParamsandSampleRange gaussian_params);
 
-    int insertVSum(UUID peerID, long[] v);
+    int insertVSum(VSum vSum);
 
-    int distanceofReceiveRquestSumCount(UUID uid, long[] di_sample_sum, long sample_count);
+    int distanceofReceiveRquestSumCount(SampleSumandCount sampleSumandCount);
 
 //    default int insertVi(Person person){
 //        UUID id = UUID.randomUUID();

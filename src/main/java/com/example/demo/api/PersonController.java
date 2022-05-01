@@ -1,13 +1,14 @@
 package com.example.demo.api;
 
+import com.example.demo.model.P_VifromSQMatrix;
 import com.example.demo.model.Person;
+import com.example.demo.model.P_SumandCountforUnit;
 import com.example.demo.service.PersonService;
 import lombok.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RequestMapping("api/v1/person")
@@ -20,13 +21,13 @@ public class PersonController {
     }
 
     @PostMapping("/requestrc") //peerID
-    public void requestVifromSQMatrix(@Valid @NonNull @RequestBody UUID peerId, int row, int col){
-        personService.requestVifromSQMatrix(row, col);
+    public void requestVifromSQMatrix(@Valid @NonNull @RequestBody P_VifromSQMatrix p_vifromSQMatrix){
+        personService.requestVifromSQMatrix(p_vifromSQMatrix);
     }
 
     @PostMapping("/sumCountforUnit") //serverID
-    public void requestSumandCountforUnit(@Valid @NonNull @RequestBody UUID serverID, int x1, int x2){
-        personService.requestSumandCountforUnit(x1, x2);
+    public void requestSumandCountforUnit(@Valid @NonNull @RequestBody P_SumandCountforUnit pSumandCountforUnit){
+        personService.requestSumandCountforUnit(pSumandCountforUnit);
     }
 
     @PostMapping

@@ -2,9 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dao.PeerDao;
 import com.example.demo.dao.PersonDao;
-import com.example.demo.model.Person;
-import com.example.demo.model.RCVisTuple;
-import com.example.demo.model.RowColHash;
+import com.example.demo.model.*;
 import com.example.demo.p4p.user.UserVector2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,16 +20,16 @@ public class PeerService {
     public PeerService(@Qualifier("postgres1") PeerDao peerDao){
         this.peerDao = peerDao;
     }
-    public int addViandProof(UUID userid, UUID id, long[] vi, UserVector2.L2NormBoundProof2 peerProof){
-        return  peerDao.insertViandProof(userid, id, vi, peerProof);
+    public int addViandProof(ViandProof viandProof){
+        return  peerDao.insertViandProof(viandProof);
     }
 
-    public int addVHashMatrix(UUID userid, long[][] v_matrix, RowColHash rowColHash){
-         return  peerDao.insertVHashMatrix(userid, v_matrix, rowColHash);
+    public int addVHashMatrix(VHashMatrix vHashMatrix){
+         return  peerDao.insertVHashMatrix(vHashMatrix);
     }
 
-    public int hashVerifywithReceiveRquestRCVisTuple(UUID userid, RCVisTuple rcVisTuple){
-        return  peerDao.hashVerifywithReceiveRquestRCVisTuple(userid, rcVisTuple);
+    public int hashVerifywithReceiveRquestRCVisTuple(RCVisTupleUser rcVisTupleUser){
+        return  peerDao.hashVerifywithReceiveRquestRCVisTuple(rcVisTupleUser);
     }
 
 }

@@ -1,5 +1,7 @@
 package com.example.demo.dao;
 
+import com.example.demo.model.P_SumandCountforUnit;
+import com.example.demo.model.P_VifromSQMatrix;
 import com.example.demo.model.Person;
 import com.example.demo.model.RCVisTuple;
 import org.springframework.stereotype.Repository;
@@ -25,12 +27,12 @@ public class FakePersonDataAccessService implements PersonDao{
     }
 
     @Override
-    public RCVisTuple requestVifromSQMatrix(int row, int col) {
+    public RCVisTuple requestVifromSQMatrix(P_VifromSQMatrix p_vifromSQMatrix) {
         return null;
     }
 
     @Override
-    public long[] requestSumandCountforUnit(int x1, int x2) {
+    public long[] requestSumandCountforUnit(P_SumandCountforUnit p_sumandCountforUnit) {
         return new long[0];
     }
 

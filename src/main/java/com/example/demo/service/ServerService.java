@@ -3,8 +3,7 @@ package com.example.demo.service;
 import com.example.demo.dao.PeerDao;
 import com.example.demo.dao.PersonDao;
 import com.example.demo.dao.ServerDao;
-import com.example.demo.model.Person;
-import com.example.demo.model.RowColHash;
+import com.example.demo.model.*;
 import com.example.demo.p4p.user.UserVector2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,20 +22,20 @@ public class ServerService {
         this.serverDao = serverDao;
     }
 
-    public int insertUiandProof(UUID userid, UUID id, long[] ui, UserVector2.L2NormBoundProof2 serverProof) {
-        return serverDao.insertUiandProof(userid, id, ui, serverProof);
+    public int insertUiandProof(UiandProof uiandProof) {
+        return serverDao.insertUiandProof(uiandProof);
     }
 
-    public int insertGaussParamsandSampleRange( UUID userid, UUID id, long[] gaussian_params, long[][]xy){
-        return serverDao.insertGaussParamsandSampleRange(userid, id, gaussian_params, xy);
+    public int insertGaussParamsandSampleRange(GaussParamsandSampleRange gaussian_params){
+        return serverDao.insertGaussParamsandSampleRange(gaussian_params);
     }
 
-    public int insertVSum( UUID peerID, long[] v_sum){
-        return serverDao.insertVSum(peerID, v_sum);
+    public int insertVSum(VSum vSum){
+        return serverDao.insertVSum(vSum);
     }
 
-    public int sendRquestSampleSumCount(UUID userid,  long[] di_sum, long di_count){
-        return serverDao.distanceofReceiveRquestSumCount(userid, di_sum, di_count);
+    public int sendRquestSampleSumCount(SampleSumandCount sampleSumandCount){
+        return serverDao.distanceofReceiveRquestSumCount(sampleSumandCount);
     }
 
 }

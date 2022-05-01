@@ -1,8 +1,7 @@
 package com.example.demo.api;
 
 import com.example.demo.dao.ServerDataAccessService;
-import com.example.demo.model.RCVisTuple;
-import com.example.demo.model.RowColHash;
+import com.example.demo.model.*;
 import com.example.demo.p4p.user.UserVector2;
 import com.example.demo.service.PeerService;
 import com.example.demo.service.ServerService;
@@ -25,23 +24,23 @@ public class ServerController {
     }
 
     @PostMapping("/addGaussParamsSampleRange")
-    public void addGaussParamsSampleRange(@Valid @NonNull @RequestBody UUID userid, UUID id, long[] gaussian_params, long[][]xy){
-        serverService.insertGaussParamsandSampleRange(userid, id,  gaussian_params,  xy);
+    public void addGaussParamsSampleRange(@Valid @NonNull @RequestBody GaussParamsandSampleRange gaussParamsSampleRange){
+        serverService.insertGaussParamsandSampleRange(gaussParamsSampleRange);
     }
 
     @PostMapping("/uiandproof")
-    public void addUiandProof(@Valid @NonNull @RequestBody UUID userid, UUID id, long[] ui, UserVector2.L2NormBoundProof2 serverProof){
-        serverService.insertUiandProof(userid, id,  ui,  serverProof);
+    public void addUiandProof(@Valid @NonNull @RequestBody UiandProof uiandProof){
+        serverService.insertUiandProof(uiandProof);
     }
 
     @PostMapping("/samplesumcount")
-    public void sendRquestSampleSumCount (@Valid @NonNull @RequestBody UUID userid,  long[] di_sum, long di_count){
-        serverService.sendRquestSampleSumCount(userid, di_sum, di_count);
+    public void sendRquestSampleSumCount (@Valid @NonNull @RequestBody SampleSumandCount sampleSumandCount){
+        serverService.sendRquestSampleSumCount(sampleSumandCount);
     }
 
     @PostMapping("/addvsum") // peerID
-    public void addVSum(@Valid @NonNull @RequestBody UUID peerID, long[] v_sum) {
-        serverService.insertVSum(peerID, v_sum);
+    public void addVSum(@Valid @NonNull @RequestBody VSum vSum) {
+        serverService.insertVSum(vSum);
     }
 
 }
