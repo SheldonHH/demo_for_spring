@@ -37,7 +37,7 @@ pgrep psql
 docker stop  $(docker ps -a | grep -E 'postgres-spring' | awk '{print $1}' | awk 'NR==1') && docker rm  $(docker ps -a | grep -E 'postgres-spring' | awk '{print $1}' | awk 'NR==1')
 docker run --name postgres-spring -e POSTGRES_PASSWORD=password -d -p 5432:5432 postgres:alpine
 docker exec -it $(docker ps | grep -E 'postgres-spring' | awk '{print $1}') /bin/bash
-
+psql -U postgres
 docker port demodb
 psql 
 ```
