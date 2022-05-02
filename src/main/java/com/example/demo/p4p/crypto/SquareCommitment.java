@@ -330,8 +330,11 @@ public class SquareCommitment extends Commitment implements Serializable{
 
         // Setup the parameters:
         P4PParameters.initialize(k, false);
-        NativeBigInteger g =  P4PParameters.getGenerator();
-        NativeBigInteger h =  P4PParameters.getFreshGenerator();
+//        NativeBigInteger g =  P4PParameters.getGenerator();
+//        NativeBigInteger h =  P4PParameters.getFreshGenerator();
+        NativeBigInteger g = new NativeBigInteger("3459276026518079674568408512735917085876933054878224377582397778495423201743627684916338757642004215208935956214764216182555928533733818616652879775932081");
+        NativeBigInteger h = new NativeBigInteger("1815409602493030510804268646246184547552449386433387561905816534248675443892847368541434018303659631380097127756952567150690215332149993674119991116919571");
+
         // We should use the same generators for both the prover and the verifier.
 
         SquareCommitment sc = new SquareCommitment(g, h);

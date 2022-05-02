@@ -44,6 +44,8 @@ import com.example.demo.p4p.crypto.Proof;
 import com.example.demo.p4p.crypto.BitCommitment;
 import com.example.demo.p4p.crypto.ThreeWayCommitment;
 import com.example.demo.p4p.crypto.Commitment;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Changes:
@@ -75,13 +77,15 @@ import com.example.demo.p4p.crypto.Commitment;
 
 public class UserVector2 extends UserVector implements Serializable{
     private static final long serialVersionUID = 6529685098267757690L;
-    static private NativeBigInteger g = null;
-    static private NativeBigInteger h = null;
+    static private NativeBigInteger g = new NativeBigInteger("3459276026518079674568408512735917085876933054878224377582397778495423201743627684916338757642004215208935956214764216182555928533733818616652879775932081");
+    static private NativeBigInteger h = new NativeBigInteger("1815409602493030510804268646246184547552449386433387561905816534248675443892847368541434018303659631380097127756952567150690215332149993674119991116919571");
+//    static private NativeBigInteger g = null;
+//    static private NativeBigInteger h = null;
     //private SquareCommitment sc = null;
 
-    public UserVector2(){
-        super(new long [0], 0, 0);
-    }
+//    public UserVector2(){
+//        super(new long [0], 0, 0);
+//    }
     /**
      * Constructs a (share of) user vector.
      *
@@ -274,7 +278,6 @@ public class UserVector2 extends UserVector implements Serializable{
      * the server who will do all the verification. It is possible to change
      * this so that the privacy peer shares more work.
      */
-
 //    https://stackoverflow.com/questions/15331846/non-static-variable-this-cannot-be-referenced-from-a-static-context-when-creat
     public static class L2NormBoundProof2 extends Proof implements Serializable {
 
@@ -294,8 +297,8 @@ public class UserVector2 extends UserVector implements Serializable{
         private BitCommitment.BitCommitmentProof[] bcProofs = null;
         // The bit proof for the sum of the squares
         static private boolean forServer = false;
-        static private L2NormBoundProof2 serverProof = new L2NormBoundProof2(true);
-        static private L2NormBoundProof2 peerProof = new L2NormBoundProof2(false);
+        private L2NormBoundProof2 serverProof = null;
+        private L2NormBoundProof2 peerProof = null;
         private int ssBL = 0;
 
 
@@ -307,7 +310,8 @@ public class UserVector2 extends UserVector implements Serializable{
          * @param	forServer       will build a server proof if true. Otherise
          *                          build proof for the privacy peer.
          */
-        public L2NormBoundProof2(boolean forServer) {
+        @JsonCreator
+        public L2NormBoundProof2(@JsonProperty("forServer") boolean forServer) {
             this.forServer = forServer;
         }
 
@@ -326,8 +330,8 @@ public class UserVector2 extends UserVector implements Serializable{
                 throw new RuntimeException("Checksum vector not set or shares"
                         + " not generated yet.");
 
-//            serverProof = new L2NormBoundProof2(true);
-//            peerProof =  new L2NormBoundProof2(false);
+            serverProof = new L2NormBoundProof2(true);
+            peerProof =  new L2NormBoundProof2(false);
 
             /** For the server: */
             serverProof.checksums = new long[c.length];

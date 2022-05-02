@@ -57,7 +57,8 @@ import com.example.demo.net.i2p.util.NativeBigInteger;
 
 public class VectorCommitment extends P4PParameters {
     protected NativeBigInteger[] g = null;
-    protected NativeBigInteger h = null;
+    protected NativeBigInteger h = new NativeBigInteger("1815409602493030510804268646246184547552449386433387561905816534248675443892847368541434018303659631380097127756952567150690215332149993674119991116919571")
+;
 
     /**
      * The dimension of the vector

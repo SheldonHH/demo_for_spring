@@ -37,10 +37,11 @@ public class Server1 {
 class Multi1 extends Thread{
     private Socket s=null;
     ObjectInputStream infromClient;
-    NativeBigInteger g = null;
-    NativeBigInteger h = null;
+    NativeBigInteger g = new NativeBigInteger("3459276026518079674568408512735917085876933054878224377582397778495423201743627684916338757642004215208935956214764216182555928533733818616652879775932081");
+    NativeBigInteger h = new NativeBigInteger("1815409602493030510804268646246184547552449386433387561905816534248675443892847368541434018303659631380097127756952567150690215332149993674119991116919571")
+;
     int k = 512;     // Security parameter
-    int m = 10000;      // User vector dimension
+    int m = 3;      // User vector dimension
     int n = 1;      // Number of users
     int l = 40;      // Bit length of L
     int zkpIterations = 50;

@@ -61,8 +61,9 @@ import com.example.demo.net.i2p.util.NativeBigInteger;
  */
 
 public class P4PServer extends P4PParameters {
-    private NativeBigInteger g = null;
-    private NativeBigInteger h = null;
+    private NativeBigInteger g = new NativeBigInteger("3459276026518079674568408512735917085876933054878224377582397778495423201743627684916338757642004215208935956214764216182555928533733818616652879775932081");
+    private NativeBigInteger h = new NativeBigInteger("1815409602493030510804268646246184547552449386433387561905816534248675443892847368541434018303659631380097127756952567150690215332149993674119991116919571")
+;
 
     protected int m = -1;            // The dimension of user vector
     protected long F = -1;

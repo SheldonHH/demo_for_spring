@@ -76,11 +76,12 @@ import org.apache.http.util.EntityUtils;
  */
 
 public class P4PSim extends P4PParameters {
-    private static NativeBigInteger g = null;
-    private static NativeBigInteger h = null;
+    private static NativeBigInteger g = new NativeBigInteger("3459276026518079674568408512735917085876933054878224377582397778495423201743627684916338757642004215208935956214764216182555928533733818616652879775932081");
+    private static NativeBigInteger h = new NativeBigInteger("1815409602493030510804268646246184547552449386433387561905816534248675443892847368541434018303659631380097127756952567150690215332149993674119991116919571");
+
 
     private static int k = 512;     // Security parameter
-    private static int m = 10000;      // User vector dimension
+    private static int m = 3;      // User vector dimension
     private static int n = 1;      // Number of users
     private static int l = 40;      // Bit length of L
     final static CloseableHttpClient httpClient = HttpClients.createDefault();
