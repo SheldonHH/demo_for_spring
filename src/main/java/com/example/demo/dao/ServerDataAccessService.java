@@ -34,6 +34,8 @@ public class ServerDataAccessService implements ServerDao{
             long[] ui_arr =  uiandProof.getUi();
             Long[] aLong = new Long[ui_arr.length];
             Arrays.setAll(aLong, i -> aLong[i]);
+
+            // convert to string array first, then insert as TEXT array
             String[] strArray = Arrays.stream(ui_arr)
                     .mapToObj(String::valueOf)
                     .toArray(String[]::new);

@@ -44,7 +44,14 @@ ALTER ROLE client3 WITH PASSWORD 'password';
 ALTER ROLE client4 WITH PASSWORD 'password';
 
 
-
+\c client1
+DROP TABLE IF EXISTS VHashMatrix; 
+CREATE TABLE VHashMatrix (
+	v_id UUID PRIMARY KEY,
+	row text,
+	col text,
+	vi text[]	
+);
 
 \connect demodb
 \dt
