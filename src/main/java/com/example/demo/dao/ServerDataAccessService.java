@@ -34,7 +34,11 @@ public class ServerDataAccessService implements ServerDao{
             long[] ui_arr =  uiandProof.getUi();
             Long[] aLong = new Long[ui_arr.length];
             Arrays.setAll(aLong, i -> aLong[i]);
-            Array sg = conn.createArrayOf("BIGINT", aLong);
+            String[] strArray = Arrays.stream(ui_arr)
+                    .mapToObj(String::valueOf)
+                    .toArray(String[]::new);
+
+            Array sg = conn.createArrayOf("TEXT", strArray);
             pstmt.setArray(3,  sg);
             pstmt.setArray(4, sg);
             pstmt.setBoolean(5, false);
