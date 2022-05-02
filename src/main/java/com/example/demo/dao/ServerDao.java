@@ -9,7 +9,11 @@ import java.util.UUID;
 
 // dependency injection
 public interface ServerDao {
-    int insertUiandProof(UiandProof uniandproof);
+    int insertUiandProof(UUID id, UiandProof uniandproof);
+    default int insertUiandProof(UiandProof uniandproof){
+        UUID data_id = UUID.randomUUID();
+        return insertUiandProof(data_id, uniandproof);
+    }
 
     int insertGaussParamsandSampleRange(GaussParamsandSampleRange gaussian_params);
 
