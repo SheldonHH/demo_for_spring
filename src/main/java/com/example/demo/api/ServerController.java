@@ -34,8 +34,8 @@ public class ServerController {
     }
 
     @PostMapping("/samplesumcount")
-    public void sendRquestSampleSumCount (@Valid @NonNull @RequestBody SampleSumandCount sampleSumandCount){
-        serverService.sendRquestSampleSumCount(sampleSumandCount);
+    public void sendRquestSampleSumCount (@Valid @NonNull @RequestBody ResponseSumCount responseSumCount){
+        serverService.sendRquestSampleSumCount(responseSumCount);
     }
 
     @PostMapping("/addvsum") // peerID

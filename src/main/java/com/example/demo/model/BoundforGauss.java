@@ -2,6 +2,8 @@ package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class BoundforGauss {
@@ -11,14 +13,24 @@ public class BoundforGauss {
     public long minX1;
     public long minX2;
     String gaussian_params;
+    ArrayList<String> availGaussUnits;
 
-    public BoundforGauss(@JsonProperty("user_id") UUID user_id, @JsonProperty("maxX1") long maxX1, @JsonProperty("maxX2")long maxX2, @JsonProperty("minX1") long minX1, @JsonProperty("minX2")long minX2, @JsonProperty("gaussian_params")String gaussian_params) {
+    public ArrayList<String> getAvailGaussUnits() {
+        return availGaussUnits;
+    }
+
+    public void setAvailGaussUnits(ArrayList<String> availGaussUnits) {
+        this.availGaussUnits = availGaussUnits;
+    }
+
+    public BoundforGauss(@JsonProperty("user_id") UUID user_id, @JsonProperty("maxX1") long maxX1, @JsonProperty("maxX2")long maxX2, @JsonProperty("minX1") long minX1, @JsonProperty("minX2")long minX2, @JsonProperty("gaussian_params")String gaussian_params, @JsonProperty("availGaussUnits")ArrayList<String> availGaussUnits) {
         this.user_id = user_id;
         this.maxX1 = maxX1;
         this.maxX2 = maxX2;
         this.minX1 = minX1;
         this.minX2 = minX2;
         this.gaussian_params = gaussian_params;
+        this.availGaussUnits = availGaussUnits;
     }
 
     public UUID getUser_id() {

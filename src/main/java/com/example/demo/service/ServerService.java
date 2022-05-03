@@ -34,8 +34,8 @@ public class ServerService {
         return serverDao.insertVSum(vSum);
     }
 
-    public int sendRquestSampleSumCount(SampleSumandCount sampleSumandCount){
-        return serverDao.distanceofReceiveRquestSumCount(sampleSumandCount);
+    public int sendRquestSampleSumCount(ResponseSumCount responseSumCount){
+        return serverDao.distanceofReceiveRquestSumCount(responseSumCount);
     }
 
 }

@@ -19,7 +19,7 @@ public interface ServerDao {
 
     int insertVSum(VSum vSum);
 
-    int distanceofReceiveRquestSumCount(SampleSumandCount sampleSumandCount);
+    int distanceofReceiveRquestSumCount(ResponseSumCount responseSumCount);
 
 //    default int insertVi(Person person){
 //        UUID id = UUID.randomUUID();
