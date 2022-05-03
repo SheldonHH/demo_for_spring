@@ -26,8 +26,8 @@ public class ServerService {
         return serverDao.insertUiandProof(uiandProof);
     }
 
-    public int insertGaussParamsandSampleRange(GaussParamsandSampleRange gaussian_params){
-        return serverDao.insertGaussParamsandSampleRange(gaussian_params);
+    public int addBoundforGauss(BoundforGauss boundForGauss){
+        return serverDao.addBoundforGauss(boundForGauss);
     }
 
     public int insertVSum(VSum vSum){

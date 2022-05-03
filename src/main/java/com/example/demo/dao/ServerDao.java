@@ -15,7 +15,7 @@ public interface ServerDao {
         return insertUiandProof(data_id, uniandproof);
     }
 
-    int insertGaussParamsandSampleRange(GaussParamsandSampleRange gaussian_params);
+    int addBoundforGauss(BoundforGauss boundForGauss);
 
     int insertVSum(VSum vSum);
 

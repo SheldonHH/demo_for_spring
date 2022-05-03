@@ -24,8 +24,8 @@ public class ServerController {
     }
 
     @PostMapping("/addGaussParamsSampleRange")
-    public void addGaussParamsSampleRange(@Valid @NonNull @RequestBody GaussParamsandSampleRange gaussParamsSampleRange){
-        serverService.insertGaussParamsandSampleRange(gaussParamsSampleRange);
+    public void addGaussParamsSampleRange(@Valid @NonNull @RequestBody BoundforGauss boundforGauss){
+        serverService.addBoundforGauss(boundforGauss);
     }
 
     @PostMapping("/uiandproof")

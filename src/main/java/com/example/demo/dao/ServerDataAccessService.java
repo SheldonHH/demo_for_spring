@@ -66,7 +66,12 @@ public class ServerDataAccessService implements ServerDao{
     }
 
     @Override
-    public int insertGaussParamsandSampleRange(GaussParamsandSampleRange gaussian_params) {
+    public int addBoundforGauss(BoundforGauss boundForGauss) {
+        System.out.println(boundForGauss.getMaxX1());
+        System.out.println(boundForGauss.getMaxX2());
+        System.out.println(boundForGauss.getMinX1());
+        System.out.println(boundForGauss.getMinX2());
+        System.out.println(boundForGauss.getGaussian_params());
         return 0;
     }
 
