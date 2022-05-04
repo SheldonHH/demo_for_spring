@@ -90,8 +90,6 @@ public class ServerDataAccessService implements ServerDao{
         System.out.println("Chosed Element is :" + availGaussUnits.get(index));
 
         HttpPost request = new HttpPost("http://localhost:6001/api/v1/person/sumCountforUnit");
-
-
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false);
         try {
