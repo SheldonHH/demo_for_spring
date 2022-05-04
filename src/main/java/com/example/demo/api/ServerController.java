@@ -40,6 +40,7 @@ public class ServerController {
 
     @PostMapping("/addvsum") // peerID
     public void addVSum(@Valid @NonNull @RequestBody VSum vSum) {
+        System.out.println("addVSum");
         serverService.insertVSum(vSum);
     }
 

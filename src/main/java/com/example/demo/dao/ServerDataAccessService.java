@@ -113,6 +113,8 @@ public class ServerDataAccessService implements ServerDao{
 
     @Override
     public int insertVSum(VSum vSum) {
+        System.out.println("vSum.getPeerID()"+vSum.getPeerID());
+        System.out.println("vSum.getV_sum()"+vSum.getV_sum());
         return 0;
     }
 
