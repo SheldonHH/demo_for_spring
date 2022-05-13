@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.dao.ServerDataAccessService;
 import com.example.demo.p4p.util.P4PParameters;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,6 +18,7 @@ public class ServerApplication {
 	public static void main(String[] args) {
 		truncateUPerson();
 		P4PParameters.initialize(512,true);
+		ServerDataAccessService.server.init();
 		SpringApplication.run(ServerApplication.class, args);
 	}
 

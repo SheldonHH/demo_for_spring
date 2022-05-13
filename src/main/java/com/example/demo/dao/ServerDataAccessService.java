@@ -1,6 +1,8 @@
 package com.example.demo.dao;
 
 import com.example.demo.model.*;
+import com.example.demo.p4p.server.P4PServer;
+import com.example.demo.p4p.sim.P4PSim;
 import com.example.demo.p4p.user.UserVector2;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,6 +29,10 @@ public class ServerDataAccessService implements ServerDao{
     private final String user = "postgres";
     private final String password = "password";
     final static CloseableHttpClient httpClient = HttpClients.createDefault();
+
+
+    public static UserVector2 uv = new UserVector2(P4PSim.m, P4PSim.F, P4PSim.l, P4PSim.g, P4PSim.h);
+    public static P4PServer server = new P4PServer(P4PSim.m, P4PSim.F, P4PSim.l, P4PSim.zkpIterations, P4PSim.g, P4PSim.h);
     public Connection connect() throws SQLException {
         return DriverManager.getConnection(url, user, password);
     }
@@ -51,9 +57,23 @@ public class ServerDataAccessService implements ServerDao{
                     .mapToObj(String::valueOf)
                     .toArray(String[]::new);
 
-            Array sg = conn.createArrayOf("TEXT", strArray);
-            pstmt.setArray(3,  sg);
-            pstmt.setArray(4, sg);
+            Array ui_array = conn.createArrayOf("TEXT", strArray);
+            pstmt.setArray(3,  ui_array);
+            pstmt.setArray(4, ui_array);
+//                        if (!peerPassed)
+//                            server.disqualifyUser(i);
+//                        else
+            //TODO: user_id int
+            server.setY(1,uiandProof.getY());
+            if(!uv.verify2(uiandProof.getServerProof())) {
+                System.out.println("User " + 1
+                        + "'s vector failed the verification.");
+//                disqualifyUser(user.ID);
+//                // TODO: Must let the peer know about disqualified users so he can computes his share
+//                // of the sum (the peerSum).
+//                disqualified++;
+//                continue;
+            }
             pstmt.setBoolean(5, false);
             int affectedRows = pstmt.executeUpdate();
             // check the affected rows
@@ -61,9 +81,6 @@ public class ServerDataAccessService implements ServerDao{
                 // get the ID back
                 try (ResultSet rs = pstmt.getGeneratedKeys()) {
                     System.out.println(rs);
-//                    if (rs.next()) {
-////                        id = rs.getLong(1);
-//                    }
                 } catch (SQLException ex) {
                     System.out.println(ex.getMessage());
                 }
