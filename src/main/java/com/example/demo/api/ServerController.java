@@ -1,9 +1,6 @@
 package com.example.demo.api;
 
-import com.example.demo.dao.ServerDataAccessService;
 import com.example.demo.model.*;
-import com.example.demo.p4p.user.UserVector2;
-import com.example.demo.service.PeerService;
 import com.example.demo.service.ServerService;
 import lombok.NonNull;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.UUID;
 
 @RequestMapping("api/v1/server")
 @RestController
