@@ -65,16 +65,17 @@ public class ServerDataAccessService implements ServerDao{
 //                        else
             //TODO: user_id int
             server.setY(1,uiandProof.getY());
-            if(!uv.verify2(uiandProof.getServerProof())) {
-                System.out.println("User " + 1
-                        + "'s vector failed the verification.");
+            boolean serverPassed = uv.verify2(uiandProof.getServerProof());
+//            if(!) {
+//                System.out.println("User " + 1
+//                        + "'s vector failed the verification.");
 //                disqualifyUser(user.ID);
 //                // TODO: Must let the peer know about disqualified users so he can computes his share
 //                // of the sum (the peerSum).
 //                disqualified++;
 //                continue;
-            }
-            pstmt.setBoolean(5, false);
+//            }
+            pstmt.setBoolean(5, serverPassed);
             int affectedRows = pstmt.executeUpdate();
             // check the affected rows
             if (affectedRows > 0) {

@@ -52,10 +52,10 @@ CREATE TABLE VHashMatrix (
 	col text,
 	vi text[]	
 );
+ALTER TABLE VHashMatrix OWNER TO client1;
 
 \connect demodb
 \dt
-
 \c peer1
 ALTER TABLE public.flyway_schema_history OWNER TO peer1;
 \c peer2
