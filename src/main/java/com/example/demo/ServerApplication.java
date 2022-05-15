@@ -9,8 +9,8 @@ import java.sql.*;
 
 @SpringBootApplication
 public class ServerApplication {
-	private final static String url = "jdbc:postgresql://localhost:5432/server1";
-	private final static String user = "server1";
+	private final static String url = "jdbc:postgresql://localhost:5432/server3";
+	private final static String user = "server3";
 	private final static String password = "password";
 	public static Connection connect() throws SQLException {
 		return DriverManager.getConnection(url, user, password);

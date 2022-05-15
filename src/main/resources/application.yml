@@ -1,7 +1,7 @@
 app:
   datasource:
-    jdbc-url: jdbc:postgresql://localhost:5432/server1
-    username: server1
+    jdbc-url: jdbc:postgresql://localhost:5432/server3
+    username: server3
     password: password
     pool-size: 30
   flyway:
