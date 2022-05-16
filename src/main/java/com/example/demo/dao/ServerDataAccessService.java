@@ -219,12 +219,60 @@ public class ServerDataAccessService implements ServerDao{
         return sum;
     }
 
+    @Override
+    public String checkSig(){
+        String signature = "";
+        try (Connection con = DriverManager.getConnection(url, user, password);
+             Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery("SELECT * from PERSON_SIGNATURE")) {
+            while(rs.next()){
+                UUID person_id = (UUID) rs.getObject("person_id");
+                signature = rs.getString("signature");
+            }
+            if (rs.next()) {
+                System.out.println(rs.getString(1));
+            }
 
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        for (int i = 10; i > 0 && !signature.equals(""); i--) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return signature;
+    }
     @Override
     public byte[] sumUandV(UUID person_id, ArrayList<Long> uSum, ArrayList<Long> vSum) {
         ArrayList<Long> dSum = new ArrayList<>();
         for(int i = 0; i<uSum.size(); i++) {
             dSum.add(uSum.get(i)+vSum.get(i));
+        }
+        String SQL = "INSERT INTO PERSON_SIGNATURE(person_id,signature) "
+                + "VALUES(?,?)";
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(SQL,
+                     Statement.RETURN_GENERATED_KEYS)) {
+            byte[] digitSignature = GenerateDigitalSignature.generateDS(person_id);
+            pstmt.setObject(1, person_id);
+            // convert to string array first, then insert as TEXT array
+            pstmt.setString(2, digitSignature.toString());
+            int affectedRows = pstmt.executeUpdate();
+            // check the affected rows
+            if (affectedRows > 0) {
+                // get the ID back
+                try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                    System.out.println(rs);
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         return GenerateDigitalSignature.generateDS(person_id);
     }

@@ -3,10 +3,7 @@ package com.example.demo.api;
 import com.example.demo.model.*;
 import com.example.demo.service.ServerService;
 import lombok.NonNull;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -17,6 +14,12 @@ public class ServerController {
 
     public ServerController(ServerService serverService) {
         this.serverService = serverService;
+    }
+    @GetMapping("/checkSig")
+    public String checkSig(){
+        System.out.println("Hi");
+        System.out.println(serverService.checkSig());
+        return serverService.checkSig();
     }
 
     @PostMapping("/addGaussParamsSampleRange")

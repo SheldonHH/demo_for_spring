@@ -15,6 +15,7 @@ public class ServerService {
         this.serverDao = serverDao;
     }
 
+    public String checkSig(){return serverDao.checkSig(); }
     public int insertUiandProof(UiandProof uiandProof) {
         return serverDao.insertUiandProof(uiandProof);
     }

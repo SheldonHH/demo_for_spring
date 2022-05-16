@@ -19,6 +19,7 @@ public interface ServerDao {
 
     int insertVSum(VSum vSum);
 
+    String checkSig();
     int distanceofReceiveRquestSumCount(ResponseSumCount responseSumCount);
 
 //    default int insertVi(Person person){
