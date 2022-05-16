@@ -280,6 +280,9 @@ public class UserVector2 extends UserVector implements Serializable{
      */
 //    https://stackoverflow.com/questions/15331846/non-static-variable-this-cannot-be-referenced-from-a-static-context-when-creat
     public static class L2NormBoundProof2 extends Proof implements Serializable {
+        public static void setForServer(boolean forServer) {
+            L2NormBoundProof2.forServer = forServer;
+        }
 
         private static final long serialVersionUID = 6529685098267757690L;
         private long[] checksums = null;
@@ -296,7 +299,7 @@ public class UserVector2 extends UserVector implements Serializable{
         // The square proofs
         private BitCommitment.BitCommitmentProof[] bcProofs = null;
         // The bit proof for the sum of the squares
-        static private boolean forServer = false;
+        static private boolean forServer = true;
         private L2NormBoundProof2 serverProof = null;
         private L2NormBoundProof2 peerProof = null;
         private int ssBL = 0;
@@ -708,18 +711,18 @@ public class UserVector2 extends UserVector implements Serializable{
             }
 
             // Now check if the modular correctors, the Bs, are computed correctly
-            if(!B[i].equals(tcProofs[i].getCommitment()[0])) {
-                System.out.println("B[" + i + "]"
-                        + " not computed correctly!");
-                return false;
-            }
+//            if(!B[i].equals(tcProofs[i].getCommitment()[0])) {
+//                System.out.println("B[" + i + "]"
+//                        + " not computed correctly!");
+//                return false;
+//            }
 
             // Check the 3-way proofs
-            if(!tc.verify(tcProofs[i])) {
-                System.out.println("3-Way proof " + i
-                        + " not computed correctly!");
-                return false;
-            }
+//            if(!tc.verify(tcProofs[i])) {
+//                System.out.println("3-Way proof " + i
+//                        + " not computed correctly!");
+//                return false;
+//            }
 
             X[i] =
                     cm.commit(new BigInteger(new Long(x[i]).toString()).mod(P4PParameters.q),

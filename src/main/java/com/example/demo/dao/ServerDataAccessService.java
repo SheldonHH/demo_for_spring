@@ -1,12 +1,15 @@
 package com.example.demo.dao;
 
 import com.example.demo.model.*;
+import com.example.demo.model.signature.GenerateDigitalSignature;
+import com.example.demo.p4p.crypto.ThreeWayCommitment;
 import com.example.demo.p4p.server.P4PServer;
 import com.example.demo.p4p.sim.P4PSim;
 import com.example.demo.p4p.user.UserVector2;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -63,9 +66,16 @@ public class ServerDataAccessService implements ServerDao{
 //                        if (!peerPassed)
 //                            server.disqualifyUser(i);
 //                        else
+            long [] U_longs = Arrays.stream(strArray).mapToLong(Long::parseLong).toArray();
+            uv.setU(U_longs);
             //TODO: user_id int
-            server.setY(1,uiandProof.getY());
-            boolean serverPassed = uv.verify2(uiandProof.getServerProof());
+            uv.setY(uiandProof.getY());
+            System.out.println("isForServer: "+uiandProof.getServerProof().isForServer());
+//            ThreeWayCommitment.ThreeWayCommitmentProof[] tcProofs =
+//                    uiandProof.getTcProof();
+//            System.out.println("tcProof:"+tcProofs);
+            boolean serverPassed = false;
+//                    serverPassed = uv.verify2(uiandProof.getServerProof());
 //            if(!) {
 //                System.out.println("User " + 1
 //                        + "'s vector failed the verification.");
@@ -131,8 +141,12 @@ public class ServerDataAccessService implements ServerDao{
 
     @Override
     public int insertVSum(VSum vSum) {
+        UUID person_ID = vSum.getPersonID();
         System.out.println("vSum.getPeerID()"+vSum.getPeerID());
+        System.out.println("vSum.getPerson()"+vSum.getPersonID());
         System.out.println("vSum.getV_sum()"+vSum.getV_sum());
+        ArrayList<Long> sumU = sumUi(vSum.getPersonID());
+        sumUandV(person_ID, sumU, vSum.getV_sum());
         return 0;
     }
 
@@ -145,13 +159,59 @@ public class ServerDataAccessService implements ServerDao{
         return 0;
     }
 
+    ArrayList<ArrayList<Long>> TwoDResultList = new ArrayList<ArrayList<Long>>();
     @Override
-    public long[] sumUi(Person person) {
-        return new long[0];
+    public ArrayList<Long> sumUi(UUID person_id) {
+        String SQL = "SELECT u1 FROM U_PERSON_DATA where name=?";
+        ArrayList<Long> sum = new ArrayList<>();
+        try {
+            Connection conn = connect();
+            PreparedStatement preparedStatement = conn.prepareStatement(SQL);
+            System.out.println("person_id:"+person_id);
+            //TODO: change to UUID tyope
+            preparedStatement.setString(1,person_id.toString());
+            ResultSet rs = preparedStatement.executeQuery();
+
+            ArrayList<ArrayList<Long>> TwoDResultList = new ArrayList<ArrayList<Long>>();
+            ArrayList<String> stringList = new ArrayList<String>();
+            while (rs.next()) {
+                stringList = new ArrayList<>(Arrays.asList((String[]) rs.getArray("u1").getArray()));
+                System.out.println(Arrays.asList((String[]) rs.getArray("u1").getArray()));
+                ArrayList<Long> resultIntList = new ArrayList<Long>();
+                for (String stringValue : stringList) {
+                    try {
+                        //Convert String to long, and store it into long array list.
+                        resultIntList.add(Long.parseLong(stringValue));
+                    } catch (NumberFormatException nfe) {
+                        System.out.println("Could not parse " + nfe);
+//                        Log.w("NumberFormat", "Parsing failed! " + stringValue + " can not be an integer");
+                    }
+                }
+                TwoDResultList.add(resultIntList);
+            }
+            sum = new ArrayList<Long>(TwoDResultList.get(0).size());
+            for (int i = 0; i < TwoDResultList.get(0).size(); i++) {
+                sum.add(i, 0L);
+            }
+            for (ArrayList<Long> ui_array : TwoDResultList) {
+                for (int i = 0; i < ui_array.size(); i++) {
+                    sum.set(i, sum.get(i) + ui_array.get(i));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return sum;
     }
 
+
     @Override
-    public long[] sumUandV(Person person) {
+    public long[] sumUandV(UUID person_id, ArrayList<Long> uSum, ArrayList<Long> vSum) {
+        ArrayList<Long> dSum = new ArrayList<>();
+        for(int i = 0; i<uSum.size(); i++) {
+            dSum.add(uSum.get(i)+vSum.get(i));
+        }
+        GenerateDigitalSignature.generateDS(person_id);
         return new long[0];
     }
 }

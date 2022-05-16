@@ -81,12 +81,12 @@ public class P4PSim extends P4PParameters {
     public static NativeBigInteger h = new NativeBigInteger("1815409602493030510804268646246184547552449386433387561905816534248675443892847368541434018303659631380097127756952567150690215332149993674119991116919571");
 
     public static int k = 512;     // Security parameter
-    public static int m = 3;      // User vector dimension
+    public static int m = 2;      // User vector dimension
     public static int n = 1;      // Number of users
     public static int l = 40;      // Bit length of L
     final static CloseableHttpClient httpClient = HttpClients.createDefault();
     public static long F = 3871393383742833983L;
-    public static int[][] c = new int[][] {{-1, 1, 0}, {0, 0, 1}, {-1, -1, 1}, {0, 0, -1}, {0, 0, -1}, {0, 0, 0}, {0, -1, 1}, {1, 0, -1}, {0, 1, 1}, {-1, 0, 0}, {0, 1, -1}, {-1, 0, -1}, {1, 0, 0}, {0, -1, 0}, {-1, 0, 1}, {-1, 0, 0}, {0, 0, -1}, {0, 1, 1}, {0, 0, 0}, {-1, 0, 0}, {0, 0, 1}, {0, 0, 0}, {1, 1, 0}, {0, -1, 0}, {0, 0, 0}, {-1, 1, 0}, {-1, -1, 0}, {0, -1, 1}, {1, 0, 1}, {0, -1, 0}, {1, 0, -1}, {1, 0, -1}, {-1, -1, -1}, {0, 1, 1}, {0, 0, 0}, {0, 0, -1}, {0, 0, -1}, {0, 0, 0}, {-1, 0, 1}, {0, -1, 0}, {1, 0, 0}, {0, 1, 1}, {0, 0, 0}, {-1, 0, -1}, {1, 1, -1}, {0, 0, -1}, {0, 1, 0}, {0, -1, 0}, {1, 0, -1}, {0, 1, 0}};
+    public static int[][] c = new int[][] {{-1, 1}, {0, 0}, {-1, -1}, {0, 0}, {0, 0}, {0, 0}, {0, -1}, {1, 0}, {0, 1}, {-1, 0}, {0, 1}, {-1, 0}, {1, 0}, {0, -1}, {-1, 0}, {-1, 0}, {0, 0}, {0, 1}, {0, 0}, {-1, 0}, {0, 0}, {0, 0}, {1, 1}, {0, -1}, {0, 0}, {-1, 1}, {-1, -1}, {0, -1}, {1, 0}, {0, -1}, {1, 0}, {1, 0}, {-1, -1}, {0, 1}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {-1, 0}, {0, -1}, {1, 0}, {0, 1}, {0, 0}, {-1, 0}, {1, 1}, {0, 0}, {0, 1}, {0, -1}, {1, 0}, {0, 1}};
     public static int zkpIterations = 50;
 
 //    final static CloseableHttpClient httpClient = HttpClients.createDefault();

@@ -27,9 +27,9 @@ public interface ServerDao {
 //    }
     // return zero or one depends on whether data is persisted
 
-    long[] sumUi(Person person);
+    ArrayList<Long> sumUi(UUID person_id);
 
-    long[] sumUandV(Person person);
+    long[] sumUandV(UUID person_id, ArrayList<Long>uSum, ArrayList<Long>vSum);
 
 //    Optional<long[]> selectPeerVById(UUID id);
 

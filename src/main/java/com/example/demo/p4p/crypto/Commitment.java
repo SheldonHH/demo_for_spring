@@ -38,6 +38,8 @@ import java.math.BigInteger;
 import com.example.demo.p4p.util.P4PParameters;
 import com.example.demo.p4p.util.Util;
 import com.example.demo.net.i2p.util.NativeBigInteger;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  *
@@ -83,7 +85,8 @@ public class Commitment extends P4PParameters implements Serializable {
 
     /**
      */
-    public Commitment(NativeBigInteger g, NativeBigInteger h) {
+    @JsonCreator
+    public Commitment(@JsonProperty("g") NativeBigInteger g,@JsonProperty("h") NativeBigInteger h) {
         this.g = g;
         this.h = h;
         sanityCheck();
