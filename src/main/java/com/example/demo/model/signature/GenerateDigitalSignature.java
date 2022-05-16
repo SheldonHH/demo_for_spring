@@ -13,7 +13,8 @@ public class GenerateDigitalSignature {
         bb.putLong(uuid.getLeastSignificantBits());
         return bb.array();
     }
-    public static void generateDS(UUID person_id) {
+    public static byte[] generateDS(UUID person_id) {
+        byte[] digitalSignature = null;
         try {
             // Get instance and initialize a KeyPairGenerator object.
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA", "SUN");
@@ -34,14 +35,15 @@ public class GenerateDigitalSignature {
 //            byte[] bytes = Files.readAllBytes(Paths.get("/Users/mac/singapore/server1/README.md"));
             byte[] bytes = asBytes(person_id);
             signature.update(bytes);
-            byte[] digitalSignature = signature.sign();
+            digitalSignature = signature.sign();
 
             // Save digital signature and the public key to a file.
-            Files.write(Paths.get("signature"), digitalSignature);
+//            Files.write(Paths.get("signature"), digitalSignature);
             System.out.println(digitalSignature.toString());
-            Files.write(Paths.get("publickey"), keyPair.getPublic().getEncoded());
+//            Files.write(Paths.get("publickey"), keyPair.getPublic().getEncoded());
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return digitalSignature;
     }
 }

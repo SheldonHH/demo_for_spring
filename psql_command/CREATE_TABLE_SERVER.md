@@ -1,5 +1,5 @@
 ```
-\c server1
+\c server3
 DROP TABLE IF EXISTS U_PERSON_DATA; 
 CREATE TABLE U_PERSON_DATA (
 	data_id UUID PRIMARY KEY,
@@ -8,5 +8,5 @@ CREATE TABLE U_PERSON_DATA (
 	u2 text[],
 	verified boolean	
 );
-ALTER TABLE U_PERSON_DATA OWNER TO server1;
+ALTER TABLE U_PERSON_DATA OWNER TO server3;
 ```

@@ -15,7 +15,7 @@ public interface ServerDao {
         return insertUiandProof(data_id, uniandproof);
     }
 
-    int addBoundforGauss(BoundforGauss boundForGauss);
+    byte[] addBoundforGauss(BoundforGauss boundForGauss);
 
     int insertVSum(VSum vSum);
 
@@ -29,7 +29,7 @@ public interface ServerDao {
 
     ArrayList<Long> sumUi(UUID person_id);
 
-    long[] sumUandV(UUID person_id, ArrayList<Long>uSum, ArrayList<Long>vSum);
+    byte[] sumUandV(UUID person_id, ArrayList<Long>uSum, ArrayList<Long>vSum);
 
 //    Optional<long[]> selectPeerVById(UUID id);
 

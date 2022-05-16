@@ -19,7 +19,7 @@ public class ServerService {
         return serverDao.insertUiandProof(uiandProof);
     }
 
-    public int addBoundforGauss(BoundforGauss boundForGauss){
+    public byte[] addBoundforGauss(BoundforGauss boundForGauss){
         return serverDao.addBoundforGauss(boundForGauss);
     }
 

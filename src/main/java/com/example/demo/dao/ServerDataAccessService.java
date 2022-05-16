@@ -105,7 +105,7 @@ public class ServerDataAccessService implements ServerDao{
     }
 
     @Override
-    public int addBoundforGauss(BoundforGauss boundForGauss) {
+    public byte[] addBoundforGauss(BoundforGauss boundForGauss) {
         System.out.println(boundForGauss.getMaxX1());
         System.out.println(boundForGauss.getMaxX2());
         System.out.println(boundForGauss.getMinX1());
@@ -134,9 +134,17 @@ public class ServerDataAccessService implements ServerDao{
             e.printStackTrace();
         }
 
+//        synchronized(syncObject) {
+//            try {
+//                // Calling wait() will block this thread until another thread
+//                // calls notify() on the object.
+//                syncObject.wait();
+//            } catch (InterruptedException e) {
+//                // Happens if someone interrupts your thread.
+//            }
+//        }
 
-
-        return 0;
+        return new byte[2];
     }
 
     @Override
@@ -146,7 +154,14 @@ public class ServerDataAccessService implements ServerDao{
         System.out.println("vSum.getPerson()"+vSum.getPersonID());
         System.out.println("vSum.getV_sum()"+vSum.getV_sum());
         ArrayList<Long> sumU = sumUi(vSum.getPersonID());
-        sumUandV(person_ID, sumU, vSum.getV_sum());
+
+        System.out.print("digital signature is: ");
+
+        if(vSum.getV_sum().size() == 0){
+            System.out.println("none");
+        }else{
+            System.out.println(sumUandV(person_ID, sumU, vSum.getV_sum()));
+        }
         return 0;
     }
 
@@ -206,12 +221,11 @@ public class ServerDataAccessService implements ServerDao{
 
 
     @Override
-    public long[] sumUandV(UUID person_id, ArrayList<Long> uSum, ArrayList<Long> vSum) {
+    public byte[] sumUandV(UUID person_id, ArrayList<Long> uSum, ArrayList<Long> vSum) {
         ArrayList<Long> dSum = new ArrayList<>();
         for(int i = 0; i<uSum.size(); i++) {
             dSum.add(uSum.get(i)+vSum.get(i));
         }
-        GenerateDigitalSignature.generateDS(person_id);
-        return new long[0];
+        return GenerateDigitalSignature.generateDS(person_id);
     }
 }
