@@ -20,10 +20,9 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Repository("postgres0")
 public class ServerDataAccessService implements ServerDao{
@@ -32,7 +31,10 @@ public class ServerDataAccessService implements ServerDao{
     private final String user = "postgres";
     private final String password = "password";
     final static CloseableHttpClient httpClient = HttpClients.createDefault();
-
+    public static Map<String, String> portMap = Stream.of(new String[][] {
+            { "f000aa01-0451-4000-b000-000000000000", "6001" },
+            { "0c1e1494-aa4a-4afa-b494-d49754b0e244", "6002" },
+    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
     public static UserVector2 uv = new UserVector2(P4PSim.m, P4PSim.F, P4PSim.l, P4PSim.g, P4PSim.h);
     public static P4PServer server = new P4PServer(P4PSim.m, P4PSim.F, P4PSim.l, P4PSim.zkpIterations, P4PSim.g, P4PSim.h);
@@ -42,6 +44,7 @@ public class ServerDataAccessService implements ServerDao{
 
         @Override
     public int insertUiandProof(UUID data_id, UiandProof uiandProof) {
+        portMap.forEach((key, value) -> System.out.println(key + " : " + value));
         String SQL = "INSERT INTO U_PERSON_DATA(data_id,name,u1,u2,verified) "
                     + "VALUES(?,?,?,?,?)";
         try (Connection conn = connect();
@@ -119,7 +122,15 @@ public class ServerDataAccessService implements ServerDao{
 
 //        CrunchifyGetPropertyValues properties = new CrunchifyGetPropertyValues();
 //        properties.getPropValues();
-        HttpPost request = new HttpPost("http://localhost:6001/api/v1/person/sumCountforUnit");
+        System.out.println("boundForGauss.getUser_id()");
+        System.out.println(boundForGauss.getUser_id());
+        System.out.println("portMap.get(boundForGauss.getUser_id())");
+        HashMap<String, String> portHashMap =
+                (portMap instanceof HashMap)
+                        ? (HashMap) portMap
+                        : new HashMap<String, String>(portMap);
+        System.out.println(portHashMap.get(boundForGauss.getUser_id().toString()));
+        HttpPost request = new HttpPost("http://localhost:"+portHashMap.get(boundForGauss.getUser_id().toString())+"/api/v1/person/sumCountforUnit");
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false);
         try {
