@@ -6,6 +6,7 @@ import lombok.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 @RequestMapping("api/v1/server")
 @RestController
@@ -15,12 +16,24 @@ public class ServerController {
     public ServerController(ServerService serverService) {
         this.serverService = serverService;
     }
-    @GetMapping("/checkSig")
-    public String checkSig(){
+
+    @GetMapping("{uuidstr}")
+    public String checkSig(@PathVariable("uuidstr") String uuidstr){
+        System.out.println(uuidstr.split("=")[1]);
         System.out.println("Hi");
-        System.out.println(serverService.checkSig());
-        return serverService.checkSig();
+        UUID personID = UUID.fromString(uuidstr.split("=")[1]);
+        System.out.println(serverService.checkSig(personID));
+        return serverService.checkSig(personID);
+//        return "";
     }
+
+    @PostMapping("/cancel_ds")
+    public void cancelDS(@Valid @NonNull @RequestBody UUID person_id){
+        System.out.println("I am here");
+        serverService.cancelDS(person_id);
+    }
+
+
 
     @PostMapping("/addGaussParamsSampleRange")
     public void addGaussParamsSampleRange(@Valid @NonNull @RequestBody BoundforGauss boundforGauss){

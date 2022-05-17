@@ -17,9 +17,10 @@ public interface ServerDao {
 
     byte[] addBoundforGauss(BoundforGauss boundForGauss);
 
+    int cancelDS(UUID person_id);
     int insertVSum(VSum vSum);
 
-    String checkSig();
+    String checkSig(UUID personID);
     int distanceofReceiveRquestSumCount(ResponseSumCount responseSumCount);
 
 //    default int insertVi(Person person){

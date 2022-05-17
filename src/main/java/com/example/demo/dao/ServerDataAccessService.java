@@ -117,6 +117,8 @@ public class ServerDataAccessService implements ServerDao{
         int index = (int)(Math.random() * availGaussUnits.size());
         System.out.println("Chosed Element is :" + availGaussUnits.get(index));
 
+//        CrunchifyGetPropertyValues properties = new CrunchifyGetPropertyValues();
+//        properties.getPropValues();
         HttpPost request = new HttpPost("http://localhost:6001/api/v1/person/sumCountforUnit");
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false);
@@ -158,7 +160,7 @@ public class ServerDataAccessService implements ServerDao{
         System.out.print("digital signature is: ");
 
         if(vSum.getV_sum().size() == 0){
-            System.out.println("none");
+            System.out.println("vSum is empty");
         }else{
             System.out.println(sumUandV(person_ID, sumU, vSum.getV_sum()));
         }
@@ -220,11 +222,90 @@ public class ServerDataAccessService implements ServerDao{
     }
 
     @Override
-    public String checkSig(){
+    public int cancelDS(UUID personID){
+        String signature = checkSigWithoutTimer(personID);
+        if(signature.equals("")){
+            String SQL = "INSERT INTO PERSON_SIGNATURE(person_id,signature) "
+                    + "VALUES(?,?)";
+            try (Connection conn = connect();
+                 PreparedStatement pstmt = conn.prepareStatement(SQL,
+                         Statement.RETURN_GENERATED_KEYS)) {
+                byte[] digitSignature = GenerateDigitalSignature.generateDS(personID);
+                pstmt.setObject(1, personID);
+                pstmt.setString(2, digitSignature.toString());
+                int affectedRows = pstmt.executeUpdate();
+                // check the affected rows
+                if (affectedRows > 0) {
+                    // get the ID back
+                    try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                        System.out.println(rs);
+                    } catch (SQLException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+            }
+        }else{
+            String SQL = "UPDATE PERSON_SIGNATURE "
+                    + "SET signature = ? "
+                    + "WHERE person_id = ?";
+            try (Connection conn = connect();
+                 PreparedStatement pstmt = conn.prepareStatement(SQL,
+                         Statement.RETURN_GENERATED_KEYS)) {
+                byte[] digitSignature = GenerateDigitalSignature.generateDS(personID);
+                pstmt.setString(1, "None");
+                pstmt.setObject(2, personID);
+                int affectedRows = pstmt.executeUpdate();
+                // check the affected rows
+                if (affectedRows > 0) {
+                    try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                        System.out.println(rs);
+                    } catch (SQLException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        return 0;
+    }
+
+    public String checkSigWithoutTimer(UUID personID){
         String signature = "";
-        try (Connection con = DriverManager.getConnection(url, user, password);
-             Statement st = con.createStatement();
-             ResultSet rs = st.executeQuery("SELECT * from PERSON_SIGNATURE")) {
+        String selectionSQL = "SELECT * from PERSON_SIGNATURE where person_id = ?";
+        try {
+            Connection conn = connect();
+            PreparedStatement preparedStatement = conn.prepareStatement(selectionSQL);
+            preparedStatement.setObject(1, personID);
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()){
+                UUID person_id = (UUID) rs.getObject("person_id");
+                signature = rs.getString("signature");
+            }
+            if (rs.next()) {
+                System.out.println(rs.getString(1));
+            }
+
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return signature;
+    }
+
+    @Override
+    public String checkSig(UUID personID){
+        String signature = "";
+        String selectionSQL = "SELECT * from PERSON_SIGNATURE where person_id = ?";
+            try {
+                Connection conn = connect();
+                PreparedStatement preparedStatement = conn.prepareStatement(selectionSQL);
+                preparedStatement.setObject(1, personID);
+                ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
                 UUID person_id = (UUID) rs.getObject("person_id");
                 signature = rs.getString("signature");
@@ -245,12 +326,8 @@ public class ServerDataAccessService implements ServerDao{
         }
         return signature;
     }
-    @Override
-    public byte[] sumUandV(UUID person_id, ArrayList<Long> uSum, ArrayList<Long> vSum) {
-        ArrayList<Long> dSum = new ArrayList<>();
-        for(int i = 0; i<uSum.size(); i++) {
-            dSum.add(uSum.get(i)+vSum.get(i));
-        }
+
+    public byte[] insertToPersonSignature(UUID person_id){
         String SQL = "INSERT INTO PERSON_SIGNATURE(person_id,signature) "
                 + "VALUES(?,?)";
         try (Connection conn = connect();
@@ -275,5 +352,38 @@ public class ServerDataAccessService implements ServerDao{
             e.printStackTrace();
         }
         return GenerateDigitalSignature.generateDS(person_id);
+    }
+    @Override
+    public byte[] sumUandV(UUID person_id, ArrayList<Long> uSum, ArrayList<Long> vSum) {
+        ArrayList<Long> dSum = new ArrayList<>();
+        for(int i = 0; i<uSum.size(); i++) {
+            dSum.add(uSum.get(i)+vSum.get(i));
+        }
+        System.out.println("dSum:"+dSum);
+        String signature = "";
+        byte[] signature_byte_array = new byte[]{};
+        String selectionSQL = "SELECT * from PERSON_SIGNATURE where person_id = ?";
+        try {
+            Connection conn = connect();
+            PreparedStatement preparedStatement = conn.prepareStatement(selectionSQL);
+            preparedStatement.setObject(1, person_id);
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()){
+//                UUID person_id = (UUID) rs.getObject("person_id");
+                signature = rs.getString("signature");
+            }
+            if (rs.next()) {
+                System.out.println(rs.getString(1));
+            }
+            if(!signature.equals("None") && signature.equals("")){
+                System.out.println("signature:::::"+signature);
+                signature_byte_array = insertToPersonSignature(person_id);
+            }
+
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return signature_byte_array;
     }
 }

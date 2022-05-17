@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class ServerService {
     private final ServerDao serverDao;
@@ -15,7 +17,8 @@ public class ServerService {
         this.serverDao = serverDao;
     }
 
-    public String checkSig(){return serverDao.checkSig(); }
+    public int cancelDS(UUID personID) { return serverDao.cancelDS(personID); }
+    public String checkSig(UUID personID){return serverDao.checkSig(personID); }
     public int insertUiandProof(UiandProof uiandProof) {
         return serverDao.insertUiandProof(uiandProof);
     }
