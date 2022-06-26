@@ -1,11 +1,23 @@
 package com.example.demo.api;
 
 import com.example.demo.model.*;
+import com.example.demo.p4p.crypto.BitCommitment;
+import com.example.demo.p4p.crypto.SquareCommitment;
+import com.example.demo.p4p.crypto.ThreeWayCommitment;
+import com.example.demo.p4p.user.UserVector2;
 import com.example.demo.service.ServerService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import lombok.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @RequestMapping("api/v1/server")
@@ -43,6 +55,12 @@ public class ServerController {
     @PostMapping("/uiandproof")
     public void addUiandProof(@Valid @NonNull @RequestBody UiandProof uiandProof){
         serverService.insertUiandProof(uiandProof);
+    }
+
+
+    @PostMapping("/tcProof")
+    public void tcandProof(@Valid @NonNull @RequestBody ThreeWayCommitment.ThreeWayCommitmentProof tcProof){
+        System.out.println("tcProofs");
     }
 
     @PostMapping("/samplesumcount")

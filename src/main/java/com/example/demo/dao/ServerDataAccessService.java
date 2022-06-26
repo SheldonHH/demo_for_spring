@@ -2,13 +2,17 @@ package com.example.demo.dao;
 
 import com.example.demo.model.*;
 import com.example.demo.model.signature.GenerateDigitalSignature;
+import com.example.demo.p4p.crypto.BitCommitment;
+import com.example.demo.p4p.crypto.SquareCommitment;
 import com.example.demo.p4p.crypto.ThreeWayCommitment;
 import com.example.demo.p4p.server.P4PServer;
 import com.example.demo.p4p.sim.P4PSim;
+import com.example.demo.p4p.user.JointCommitments;
 import com.example.demo.p4p.user.UserVector2;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.gson.Gson;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -42,6 +46,40 @@ public class ServerDataAccessService implements ServerDao{
         return DriverManager.getConnection(url, user, password);
     }
 
+    public boolean serverVerification(UUID data_id, UiandProof uiandProof){
+        List<BitCommitment.BitCommitmentProof> bcList = new ArrayList<>();
+        List<ThreeWayCommitment.ThreeWayCommitmentProof> tcList = new ArrayList<>();
+        List<SquareCommitment.SquareCommitmentProof> scList = new ArrayList<>();
+        String bcjsonstr = uiandProof.getBcpjson_str();
+        String tcjsonstr = uiandProof.getTcpjson_str();
+        String scjsonstr = uiandProof.getScpjson_str();
+        Gson gson = new Gson();    // create Gson instance
+        try {
+            bcList = Arrays.asList(gson.fromJson(bcjsonstr,
+                    BitCommitment.BitCommitmentProof[].class));
+            tcList = Arrays.asList(gson.fromJson(tcjsonstr,
+                    ThreeWayCommitment.ThreeWayCommitmentProof[].class));
+//            scList = Arrays.asList(gson.fromJson(scjsonstr,
+//                    SquareCommitment.SquareCommitmentProof[].class));
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        UserVector2.L2NormBoundProof2 received_serverProof = uiandProof.getServerProof();
+        BitCommitment.BitCommitmentProof[] bcpsArray = new BitCommitment.BitCommitmentProof[bcList.size()];
+        ThreeWayCommitment.ThreeWayCommitmentProof[] tcpsArray = new ThreeWayCommitment.ThreeWayCommitmentProof[tcList.size()];
+        SquareCommitment.SquareCommitmentProof[] scpsArray = new SquareCommitment.SquareCommitmentProof[scList.size()];
+        received_serverProof.setBcProofs(bcList.toArray(bcpsArray));
+        received_serverProof.setTcProofs(tcList.toArray(tcpsArray));
+        received_serverProof.setScProofs(scList.toArray(scpsArray));
+        if(!uv.verify2(received_serverProof)) {
+            System.out.println("data_id " + data_id + "'s vector failed the verification.");
+            return false;
+        }else{
+            System.out.println("passed");
+            return true;
+        }
+    }
         @Override
     public int insertUiandProof(UUID data_id, UiandProof uiandProof) {
         portMap.forEach((key, value) -> System.out.println(key + " : " + value));
@@ -74,6 +112,44 @@ public class ServerDataAccessService implements ServerDao{
             //TODO: user_id int
             uv.setY(uiandProof.getY());
             System.out.println("isForServer: "+uiandProof.getServerProof().isForServer());
+//            serverVerification(data_id,uiandProof);
+            List<BitCommitment.BitCommitmentProof> bcList = new ArrayList<>();
+            List<ThreeWayCommitment.ThreeWayCommitmentProof> tcList = new ArrayList<>();
+            List<SquareCommitment.SquareCommitmentProof> scList = new ArrayList<>();
+            String bcjsonstr = uiandProof.getBcpjson_str();
+            String tcjsonstr = uiandProof.getTcpjson_str();
+//            String scjsonstr = uiandProof.getScpjson_str();
+            JointCommitments jcs = uiandProof.getJointCommitments();
+            Gson gson = new Gson();    // create Gson instance
+            try {
+                bcList = Arrays.asList(gson.fromJson(bcjsonstr,
+                        BitCommitment.BitCommitmentProof[].class));
+                tcList = Arrays.asList(gson.fromJson(tcjsonstr,
+                        ThreeWayCommitment.ThreeWayCommitmentProof[].class));
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+
+            UserVector2.L2NormBoundProof2 received_serverProof = uiandProof.getServerProof();
+            BitCommitment.BitCommitmentProof[] bcpsArray = new BitCommitment.BitCommitmentProof[bcList.size()];
+            ThreeWayCommitment.ThreeWayCommitmentProof[] tcpsArray = new ThreeWayCommitment.ThreeWayCommitmentProof[tcList.size()];
+            SquareCommitment.SquareCommitmentProof[] scpsArray = new SquareCommitment.SquareCommitmentProof[scList.size()];
+            received_serverProof.setBcProofs(bcList.toArray(bcpsArray));
+            received_serverProof.setTcProofs(tcList.toArray(tcpsArray));
+            received_serverProof.setScProofs(scList.toArray(scpsArray));
+
+
+
+            if(!uv.verify2(received_serverProof)) {
+                System.out.println("data_id " + data_id + "'s vector failed the verification.");
+//                return false;
+            }else{
+                System.out.println("passed");
+//                return true;
+            }
+
 //            ThreeWayCommitment.ThreeWayCommitmentProof[] tcProofs =
 //                    uiandProof.getTcProof();
 //            System.out.println("tcProof:"+tcProofs);

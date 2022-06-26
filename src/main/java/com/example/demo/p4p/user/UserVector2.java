@@ -77,15 +77,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UserVector2 extends UserVector implements Serializable{
     private static final long serialVersionUID = 6529685098267757690L;
-    static private NativeBigInteger g = new NativeBigInteger("3459276026518079674568408512735917085876933054878224377582397778495423201743627684916338757642004215208935956214764216182555928533733818616652879775932081");
-    static private NativeBigInteger h = new NativeBigInteger("1815409602493030510804268646246184547552449386433387561905816534248675443892847368541434018303659631380097127756952567150690215332149993674119991116919571");
-//    static private NativeBigInteger g = null;
-//    static private NativeBigInteger h = null;
+    static private NativeBigInteger g = new NativeBigInteger("3182089256208329047054709904358973599639052582169128376753217579641056697166499158386824120768854848163132851742558842187976312344846648732546791352223868");
+    static private NativeBigInteger h = new NativeBigInteger("9793143674503176705343368747667288665355699962542491643750752248068073537700661368128860976203407269976279596607505206660360515029147205303637405777467078");
     //private SquareCommitment sc = null;
 
-//    public UserVector2(){
-//        super(new long [0], 0, 0);
-//    }
+    public UserVector2(){
+        super(new long [0], 0, 0);
+    }
     /**
      * Constructs a (share of) user vector.
      *
@@ -280,8 +278,48 @@ public class UserVector2 extends UserVector implements Serializable{
      */
 //    https://stackoverflow.com/questions/15331846/non-static-variable-this-cannot-be-referenced-from-a-static-context-when-creat
     public static class L2NormBoundProof2 extends Proof implements Serializable {
+        public void setChecksums(long[] checksums) {
+            this.checksums = checksums;
+        }
+
+        public void setChecksumRandomness(BigInteger[] checksumRandomness) {
+            this.checksumRandomness = checksumRandomness;
+        }
+
+        public void setMdCorrector(BigInteger[] mdCorrector) {
+            this.mdCorrector = mdCorrector;
+        }
+
+        public void setTcProofs(ThreeWayCommitment.ThreeWayCommitmentProof[] tcProofs) {
+            this.tcProofs = tcProofs;
+        }
+
+        public void setScProofs(SquareCommitment.SquareCommitmentProof[] scProofs) {
+            this.scProofs = scProofs;
+        }
+
+        public void setBcProofs(BitCommitment.BitCommitmentProof[] bcProofs) {
+            this.bcProofs = bcProofs;
+        }
+
         public static void setForServer(boolean forServer) {
             L2NormBoundProof2.forServer = forServer;
+        }
+
+        public void setServerProof(L2NormBoundProof2 serverProof) {
+            this.serverProof = serverProof;
+        }
+
+        public void setPeerProof(L2NormBoundProof2 peerProof) {
+            this.peerProof = peerProof;
+        }
+
+        public void setSsBL(int ssBL) {
+            this.ssBL = ssBL;
+        }
+
+        public void setTc(ThreeWayCommitment tc) {
+            this.tc = tc;
         }
 
         private static final long serialVersionUID = 6529685098267757690L;
@@ -299,7 +337,7 @@ public class UserVector2 extends UserVector implements Serializable{
         // The square proofs
         private BitCommitment.BitCommitmentProof[] bcProofs = null;
         // The bit proof for the sum of the squares
-        static private boolean forServer = true;
+        static private boolean forServer = false;
         private L2NormBoundProof2 serverProof = null;
         private L2NormBoundProof2 peerProof = null;
         private int ssBL = 0;
@@ -334,6 +372,7 @@ public class UserVector2 extends UserVector implements Serializable{
                         + " not generated yet.");
 
             serverProof = new L2NormBoundProof2(true);
+//            System.out.println("here"+getServerProof().isForServer());
             peerProof =  new L2NormBoundProof2(false);
 
             /** For the server: */
@@ -618,9 +657,23 @@ public class UserVector2 extends UserVector implements Serializable{
             proof = new L2NormBoundProof2(server);
             proof.construct(); // for c.length
         }
+        System.out.println("what"+server);
+        System.out.println("proof.getServerProof() "+proof.getServerProof().isForServer());
         return server ? proof.getServerProof() : proof.getPeerProof();
     }
+    public Proof getServerBoundProof2(L2NormBoundProof2 serverProof) {
+        serverProof = new L2NormBoundProof2(true);
+        serverProof.construct();
+        return serverProof;
+    }
 
+    public static void setForServer(boolean forServer) {
+        L2NormBoundProof2.forServer = forServer;
+    }
+
+    public void setProof(L2NormBoundProof2 proof) {
+        this.proof = proof;
+    }
 
     /**
      * The verifier.
@@ -711,18 +764,18 @@ public class UserVector2 extends UserVector implements Serializable{
             }
 
             // Now check if the modular correctors, the Bs, are computed correctly
-//            if(!B[i].equals(tcProofs[i].getCommitment()[0])) {
-//                System.out.println("B[" + i + "]"
-//                        + " not computed correctly!");
-//                return false;
-//            }
+            if(!B[i].equals(tcProofs[i].getCommitment()[0])) {
+                System.out.println("B[" + i + "]"
+                        + " not computed correctly!");
+                return false;
+            }
 
-            // Check the 3-way proofs
-//            if(!tc.verify(tcProofs[i])) {
-//                System.out.println("3-Way proof " + i
-//                        + " not computed correctly!");
-//                return false;
-//            }
+//             Check the 3-way proofs
+            if(!tc.verify(tcProofs[i])) {
+                System.out.println("3-Way proof " + i
+                        + " not computed correctly!");
+                return false;
+            }
 
             X[i] =
                     cm.commit(new BigInteger(new Long(x[i]).toString()).mod(P4PParameters.q),

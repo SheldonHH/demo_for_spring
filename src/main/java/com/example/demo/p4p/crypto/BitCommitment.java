@@ -41,6 +41,7 @@ import com.example.demo.p4p.util.P4PParameters;
 import com.example.demo.p4p.util.StopWatch;
 import com.example.demo.p4p.util.Util;
 import com.example.demo.net.i2p.util.NativeBigInteger;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * This is a bit commitment. It only allows committing to the value of either 0
@@ -53,7 +54,7 @@ import com.example.demo.net.i2p.util.NativeBigInteger;
 public class BitCommitment extends Commitment implements Serializable{
     private static final long serialVersionUID = 6529685098267757690L;
     public BitCommitment(NativeBigInteger g, NativeBigInteger h) {
-        super(g, h);
+        super(new NativeBigInteger("3459276026518079674568408512735917085876933054878224377582397778495423201743627684916338757642004215208935956214764216182555928533733818616652879775932081"), new NativeBigInteger("1815409602493030510804268646246184547552449386433387561905816534248675443892847368541434018303659631380097127756952567150690215332149993674119991116919571"));
     }
 
     /**
@@ -139,6 +140,7 @@ public class BitCommitment extends Commitment implements Serializable{
      *     Field Arithmetic or: Can Zero-Knowledge Be for Free?, Lecture Notes 
      *     in Computer Science, Volume 1462, Jan 1998, Page 424</i>
      */
+//    @JsonDeserialize(as=BitCommitment.BitCommitmentProof.class)
     public class BitCommitmentProof extends Proof implements Serializable{
         private static final long serialVersionUID = 6529685098267757690L;
         public BitCommitmentProof() { super(); }

@@ -59,6 +59,14 @@ public class Commitment extends P4PParameters implements Serializable {
     protected NativeBigInteger h = new NativeBigInteger("1815409602493030510804268646246184547552449386433387561905816534248675443892847368541434018303659631380097127756952567150690215332149993674119991116919571")
 ;
 
+
+    public Commitment(NativeBigInteger g, NativeBigInteger h, BigInteger val, BigInteger r) {
+        this.g = g;
+        this.h = h;
+        this.val = val;
+        this.r = r;
+    }
+
     /**
      * verify that the parameters are correct.
      */
