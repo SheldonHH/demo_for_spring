@@ -151,13 +151,17 @@ public class ServerDataAccessService implements ServerDao{
                 BigInteger sa = new BigInteger(scObject.get("sa").getAsString());
                 BigInteger sb = new BigInteger(scObject.get("sb").getAsString());
                 SquareCommitment sc = new SquareCommitment(g,h,a,b,A,B,sa, sb);
+
+//                java.lang.UnsupportedOperationException: JsonNull
+                if(!scObject.get("value").isJsonNull()) sc.setVal(new BigInteger(scObject.get("value").getAsString()));
+                if(!scObject.get("randomness").isJsonNull())  sc.setR(new BigInteger(scObject.get("randomness").getAsString()));
                 JsonObject json_scp = scObject.get("proof").getAsJsonObject();
                 inner_s = sc.new SquareCommitmentProof();
                 SquareCommitment.SquareCommitmentProof au = gson.fromJson(json_scp, SquareCommitment.SquareCommitmentProof.class);
                 inner_s.setCommitment(au.getCommitment());
                 inner_s.setChallenge(au.getChallenge());
                 inner_s.setResponse(au.getResponse());
-                System.out.println("innere");
+                System.out.println("inner_s");
                 scs_array[counter] = inner_s;
                 counter++;
 //                SquareCommitment.SquareCommitmentProof  scp_json = json_scp;
@@ -175,6 +179,8 @@ public class ServerDataAccessService implements ServerDao{
 
                 JsonObject json_tcp = tcObject.get("proof").getAsJsonObject();
                 ThreeWayCommitment tc = new ThreeWayCommitment(g,h,CONST);
+                 if(!tcObject.get("value").isJsonNull())   tc.setVal(new BigInteger(tcObject.get("value").getAsString()));
+                 if(!tcObject.get("randomness").isJsonNull())   tc.setR(new BigInteger(tcObject.get("randomness").getAsString()));
                 inner_t = tc.new ThreeWayCommitmentProof();
                 ThreeWayCommitment.ThreeWayCommitmentProof au = gson.fromJson(json_tcp, ThreeWayCommitment.ThreeWayCommitmentProof.class);
                 inner_t.setCommitment(au.getCommitment());
@@ -182,8 +188,29 @@ public class ServerDataAccessService implements ServerDao{
                 inner_t.setResponse(au.getResponse());
                 inner_t.setNumeratorProof(gson.fromJson(json_tcp.get("numeratorProof"), BitCommitment.BitCommitmentProof.class));
                 inner_t.setDenominatorProof(gson.fromJson(json_tcp.get("denominatorProof"), BitCommitment.BitCommitmentProof.class));
-                System.out.println("innere");
+                System.out.println("inner_t");
                 tcs_array[counter++] = inner_t;
+            }
+
+            JsonArray bjsonArry = JsonParser.parseString(bcjson_str).getAsJsonArray();
+            BitCommitment.BitCommitmentProof[] bcs_array = new BitCommitment.BitCommitmentProof[bjsonArry.size()];
+            counter = 0;
+            for(JsonElement pa: bjsonArry){
+                BitCommitment.BitCommitmentProof inner_b = null;
+                JsonObject bcObject = pa.getAsJsonObject();
+                NativeBigInteger g = new NativeBigInteger(bcObject.get("gh").getAsJsonArray().get(0).getAsString());
+                NativeBigInteger h = new NativeBigInteger(bcObject.get("gh").getAsJsonArray().get(1).getAsString());
+                JsonObject json_tcp = bcObject.get("proof").getAsJsonObject();
+                BitCommitment bbc = new BitCommitment(g,h);
+                if(!bcObject.get("value").isJsonNull()) bbc.setVal(new BigInteger(bcObject.get("value").getAsString()));
+                if(!bcObject.get("randomness").isJsonNull()) bbc.setR(new BigInteger(bcObject.get("randomness").getAsString()));
+                inner_b = bbc.new BitCommitmentProof();
+                ThreeWayCommitment.ThreeWayCommitmentProof au = gson.fromJson(json_tcp, ThreeWayCommitment.ThreeWayCommitmentProof.class);
+                inner_b.setCommitment(au.getCommitment());
+                inner_b.setChallenge(au.getChallenge());
+                inner_b.setResponse(au.getResponse());
+                System.out.println("inner_b");
+                bcs_array[counter++] = inner_b;
             }
 
 

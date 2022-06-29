@@ -122,7 +122,14 @@ public class Commitment extends P4PParameters implements Serializable {
         return g.modPow(val.mod(q), p).multiply(h.modPow(r, p)).mod(p);
     }
 
+    public void setVal(BigInteger val) {
+        this.val = val;
+    }
 
+    public void setR(BigInteger r) {
+        this.r = r;
+    }
+    
     /**
      * Commit to a long
      */
