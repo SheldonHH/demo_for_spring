@@ -126,6 +126,7 @@ public class BitCommitment extends Commitment implements Serializable{
         return proof;
     }
 
+
     // f(r) = h^r. The onw way group homomorphism
     public BigInteger f(BigInteger i){
         return h.modPow(i, P4PParameters.p);

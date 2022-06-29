@@ -91,10 +91,44 @@ public class SquareCommitment extends Commitment implements Serializable{
     private static final long serialVersionUID = 6529685098267757690L;
     private BigInteger a = null;
     private BigInteger b = null;
-    private BigInteger A = null;
-    private BigInteger B = null;
+    private NativeBigInteger A = null;
+    private NativeBigInteger B = null;
     private BigInteger sa = null;
     private BigInteger sb = null;
+
+    public SquareCommitment(NativeBigInteger g, NativeBigInteger h, BigInteger a, BigInteger b, NativeBigInteger a1, NativeBigInteger b1, BigInteger sa, BigInteger sb) {
+        super(g, h);
+        this.a = a;
+        this.b = b;
+        A = a1;
+        B = b1;
+        this.sa = sa;
+        this.sb = sb;
+    }
+
+    public void setA(BigInteger a) {
+        this.a = a;
+    }
+
+    public void setB(BigInteger b) {
+        this.b = b;
+    }
+
+    public void setA(NativeBigInteger a) {
+        A = a;
+    }
+
+    public void setB(NativeBigInteger b) {
+        B = b;
+    }
+
+    public void setSa(BigInteger sa) {
+        this.sa = sa;
+    }
+
+    public void setSb(BigInteger sb) {
+        this.sb = sb;
+    }
 
     public SquareCommitment(NativeBigInteger g, NativeBigInteger h) {
         super(new NativeBigInteger("3459276026518079674568408512735917085876933054878224377582397778495423201743627684916338757642004215208935956214764216182555928533733818616652879775932081"), new NativeBigInteger("1815409602493030510804268646246184547552449386433387561905816534248675443892847368541434018303659631380097127756952567150690215332149993674119991116919571"));

@@ -2,6 +2,7 @@ package com.example.demo.dao;
 
 import com.example.demo.model.*;
 import com.example.demo.model.signature.GenerateDigitalSignature;
+import com.example.demo.net.i2p.util.NativeBigInteger;
 import com.example.demo.p4p.crypto.BitCommitment;
 import com.example.demo.p4p.crypto.SquareCommitment;
 import com.example.demo.p4p.crypto.ThreeWayCommitment;
@@ -12,8 +13,7 @@ import com.example.demo.p4p.user.UserVector2;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.gson.Gson;
-import org.apache.http.client.ClientProtocolException;
+import com.google.gson.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -23,6 +23,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -113,32 +114,94 @@ public class ServerDataAccessService implements ServerDao{
             uv.setY(uiandProof.getY());
             System.out.println("isForServer: "+uiandProof.getServerProof().isForServer());
 //            serverVerification(data_id,uiandProof);
-            List<BitCommitment.BitCommitmentProof> bcList = new ArrayList<>();
-            List<ThreeWayCommitment.ThreeWayCommitmentProof> tcList = new ArrayList<>();
-            List<SquareCommitment.SquareCommitmentProof> scList = new ArrayList<>();
-            String bcjsonstr = uiandProof.getBcpjson_str();
-            String tcjsonstr = uiandProof.getTcpjson_str();
-//            String scjsonstr = uiandProof.getScpjson_str();
-            JointCommitments jcs = uiandProof.getJointCommitments();
-            Gson gson = new Gson();    // create Gson instance
-            try {
-                bcList = Arrays.asList(gson.fromJson(bcjsonstr,
-                        BitCommitment.BitCommitmentProof[].class));
-                tcList = Arrays.asList(gson.fromJson(tcjsonstr,
-                        ThreeWayCommitment.ThreeWayCommitmentProof[].class));
+            List<BitCommitment.BitCommitmentProof> bcpList = new ArrayList<>();
+            List<ThreeWayCommitment.ThreeWayCommitmentProof> tcpList = new ArrayList<>();
+            List<SquareCommitment.SquareCommitmentProof> scpList = new ArrayList<>();
 
+            List<BitCommitment> bcList = new ArrayList<>();
+            List<ThreeWayCommitment> tcList = new ArrayList<>();
+            List<SquareCommitment> scList = new ArrayList<>();
+            String bcpjsonstr = uiandProof.getBcpjson_str();
+            String tcpjsonstr = uiandProof.getTcpjson_str();
+            String scpjsonstr = uiandProof.getScpjson_str();
+
+            String jcs_json_str = uiandProof.getJcsjson_str();
+            int second_occurance = jcs_json_str.indexOf("!", jcs_json_str.indexOf("!") + 1);
+            String bcjson_str = jcs_json_str.substring(0,jcs_json_str.indexOf("!"));
+            String scjson_str = jcs_json_str.substring(jcs_json_str.indexOf("!")+1,second_occurance);
+            String tcjson_str = jcs_json_str.substring(second_occurance+1);
+
+            JsonArray scsArry = JsonParser.parseString(scjson_str).getAsJsonArray();
+            List<NativeBigInteger> A_list = new ArrayList<>();
+            List<NativeBigInteger> B_list = new ArrayList<>();
+            Gson gson = new Gson();
+            for(JsonElement pa: scsArry){
+
+                JsonObject scObject = pa.getAsJsonObject();
+                JsonArray sg = scObject.get("abgh").getAsJsonArray();
+                NativeBigInteger A = new NativeBigInteger(sg.get(0).getAsString());
+                NativeBigInteger B = new NativeBigInteger(sg.get(1).getAsString());
+                NativeBigInteger g = new NativeBigInteger(sg.get(2).getAsString());
+                NativeBigInteger h = new NativeBigInteger(sg.get(3).getAsString());
+
+                BigInteger a = new BigInteger(scObject.get("a").getAsString());
+                BigInteger b = new BigInteger(scObject.get("b").getAsString());
+
+                BigInteger sa = new BigInteger(scObject.get("sa").getAsString());
+                BigInteger sb = new BigInteger(scObject.get("sb").getAsString());
+                SquareCommitment sc = new SquareCommitment(g,h,a,b,A,B,sa, sb);
+                JsonObject json_scp = scObject.get("proof").getAsJsonObject();
+                SquareCommitment.SquareCommitmentProof au = gson.fromJson(json_scp, SquareCommitment.SquareCommitmentProof.class);
+//                sc.getProof() = au;
+//                SquareCommitment.SquareCommitmentProof =new Proof(au.getCommitment(),au.getChallenge(),au.setResponse());
+                SquareCommitment.SquareCommitmentProof inner = sc.new SquareCommitmentProof();
+                inner.setCommitment(au.getCommitment());
+                inner.setChallenge(au.getChallenge());
+                inner.setResponse(au.getResponse());
+                System.out.println("innere");
+
+//                SquareCommitment.SquareCommitmentProof  scp_json = json_scp;
+        }
+
+
+//            JsonObject locObj = rootObj.getAsJsonObject("abgh");
+
+
+//            JointCommitments jcs = uiandProof.getJointCommitments();
+//            JointCommitments jcs_from_string = uiandProof.getJointCommitments();
+            // create Gson instance
+            try {
+                bcpList = Arrays.asList(gson.fromJson(bcpjsonstr,
+                        BitCommitment.BitCommitmentProof[].class));
+                tcpList = Arrays.asList(gson.fromJson(tcpjsonstr,
+                        ThreeWayCommitment.ThreeWayCommitmentProof[].class));
+                scpList = Arrays.asList(gson.fromJson(scpjsonstr,
+                        SquareCommitment.SquareCommitmentProof[].class));
+                bcList = Arrays.asList(gson.fromJson(bcjson_str,
+                        BitCommitment[].class));
+                tcList = Arrays.asList(gson.fromJson(tcjson_str,
+                        ThreeWayCommitment[].class));
+                scList = Arrays.asList(gson.fromJson(scjson_str,
+                        SquareCommitment[].class));
+//                jcs_from_string =
+//                scList = Arrays.asList(gson.fromJson(jcs_json_str.substring(jcs_json_str.indexOf(":"),jcs_json_str.indexOf("!")),
+//                        SquareCommitment[].class));
+//                tcList = Arrays.asList(gson.fromJson(jcs_json_str.substring(jcs_json_str.indexOf("!")),
+//                        ThreeWayCommitment[].class));
+
+                System.out.println("Here");
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
 
 
             UserVector2.L2NormBoundProof2 received_serverProof = uiandProof.getServerProof();
-            BitCommitment.BitCommitmentProof[] bcpsArray = new BitCommitment.BitCommitmentProof[bcList.size()];
-            ThreeWayCommitment.ThreeWayCommitmentProof[] tcpsArray = new ThreeWayCommitment.ThreeWayCommitmentProof[tcList.size()];
-            SquareCommitment.SquareCommitmentProof[] scpsArray = new SquareCommitment.SquareCommitmentProof[scList.size()];
-            received_serverProof.setBcProofs(bcList.toArray(bcpsArray));
-            received_serverProof.setTcProofs(tcList.toArray(tcpsArray));
-            received_serverProof.setScProofs(scList.toArray(scpsArray));
+            BitCommitment.BitCommitmentProof[] bcpsArray = new BitCommitment.BitCommitmentProof[bcpList.size()];
+            ThreeWayCommitment.ThreeWayCommitmentProof[] tcpsArray = new ThreeWayCommitment.ThreeWayCommitmentProof[tcpList.size()];
+            SquareCommitment.SquareCommitmentProof[] scpsArray = new SquareCommitment.SquareCommitmentProof[scpList.size()];
+            received_serverProof.setBcProofs(bcpList.toArray(bcpsArray));
+            received_serverProof.setTcProofs(tcpList.toArray(tcpsArray));
+            received_serverProof.setScProofs(scpList.toArray(scpsArray));
 
 
 
