@@ -74,7 +74,7 @@ public class ServerDataAccessService implements ServerDao{
         received_serverProof.setBcProofs(bcList.toArray(bcpsArray));
         received_serverProof.setTcProofs(tcList.toArray(tcpsArray));
         received_serverProof.setScProofs(scList.toArray(scpsArray));
-        if(!uv.verify2(received_serverProof)) {
+        if(!uv.verify2(received_serverProof,gg,hh)) {
             System.out.println("data_id " + data_id + "'s vector failed the verification.");
             return false;
         }else{
@@ -191,7 +191,7 @@ public class ServerDataAccessService implements ServerDao{
                 System.out.println("inner_t");
                 tcs_array[counter++] = inner_t;
             }
-
+            NativeBigInteger gg, hh = null;
             JsonArray bjsonArry = JsonParser.parseString(bcjson_str).getAsJsonArray();
             BitCommitment.BitCommitmentProof[] bcs_array = new BitCommitment.BitCommitmentProof[bjsonArry.size()];
             counter = 0;
@@ -199,7 +199,9 @@ public class ServerDataAccessService implements ServerDao{
                 BitCommitment.BitCommitmentProof inner_b = null;
                 JsonObject bcObject = pa.getAsJsonObject();
                 NativeBigInteger g = new NativeBigInteger(bcObject.get("gh").getAsJsonArray().get(0).getAsString());
+                gg = g;
                 NativeBigInteger h = new NativeBigInteger(bcObject.get("gh").getAsJsonArray().get(1).getAsString());
+                hh = h;
                 JsonObject json_tcp = bcObject.get("proof").getAsJsonObject();
                 BitCommitment bbc = new BitCommitment(g,h);
                 if(!bcObject.get("value").isJsonNull()) bbc.setVal(new BigInteger(bcObject.get("value").getAsString()));
@@ -215,48 +217,20 @@ public class ServerDataAccessService implements ServerDao{
 
 
 
-//            JsonObject locObj = rootObj.getAsJsonObject("abgh");
-
-
-//            JointCommitments jcs = uiandProof.getJointCommitments();
-//            JointCommitments jcs_from_string = uiandProof.getJointCommitments();
-            // create Gson instance
-            try {
-                bcpList = Arrays.asList(gson.fromJson(bcpjsonstr,
-                        BitCommitment.BitCommitmentProof[].class));
-                tcpList = Arrays.asList(gson.fromJson(tcpjsonstr,
-                        ThreeWayCommitment.ThreeWayCommitmentProof[].class));
-                scpList = Arrays.asList(gson.fromJson(scpjsonstr,
-                        SquareCommitment.SquareCommitmentProof[].class));
-                bcList = Arrays.asList(gson.fromJson(bcjson_str,
-                        BitCommitment[].class));
-                tcList = Arrays.asList(gson.fromJson(tcjson_str,
-                        ThreeWayCommitment[].class));
-                scList = Arrays.asList(gson.fromJson(scjson_str,
-                        SquareCommitment[].class));
-//                jcs_from_string =
-//                scList = Arrays.asList(gson.fromJson(jcs_json_str.substring(jcs_json_str.indexOf(":"),jcs_json_str.indexOf("!")),
-//                        SquareCommitment[].class));
-//                tcList = Arrays.asList(gson.fromJson(jcs_json_str.substring(jcs_json_str.indexOf("!")),
-//                        ThreeWayCommitment[].class));
-
-                System.out.println("Here");
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-
             UserVector2.L2NormBoundProof2 received_serverProof = uiandProof.getServerProof();
             BitCommitment.BitCommitmentProof[] bcpsArray = new BitCommitment.BitCommitmentProof[bcpList.size()];
             ThreeWayCommitment.ThreeWayCommitmentProof[] tcpsArray = new ThreeWayCommitment.ThreeWayCommitmentProof[tcpList.size()];
             SquareCommitment.SquareCommitmentProof[] scpsArray = new SquareCommitment.SquareCommitmentProof[scpList.size()];
-            received_serverProof.setBcProofs(bcpList.toArray(bcpsArray));
-            received_serverProof.setTcProofs(tcpList.toArray(tcpsArray));
-            received_serverProof.setScProofs(scpList.toArray(scpsArray));
+//            received_serverProof.setBcProofs(bcpList.toArray(bcpsArray));
+//            received_serverProof.setTcProofs(tcpList.toArray(tcpsArray));
+//            received_serverProof.setScProofs(scpList.toArray(scpsArray));
+            received_serverProof.setBcProofs(bcs_array);
+            received_serverProof.setTcProofs(tcs_array);
+            received_serverProof.setScProofs(scs_array);
 
 
 
-            if(!uv.verify2(received_serverProof)) {
+            if(!uv.verify2(received_serverProof,gg,hh)) {
                 System.out.println("data_id " + data_id + "'s vector failed the verification.");
 //                return false;
             }else{

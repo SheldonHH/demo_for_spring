@@ -300,7 +300,7 @@ public class P4PServer extends P4PParameters {
             uv.setChecksumCoefficientVectors(c);
             uv.setY(user.getY());
             UserVector2.L2NormBoundProof2 proof = user.getProof();
-            if(!uv.verify2(proof)) {
+            if(!uv.verify2(proof, null, null)) {
                 System.out.println("User " + user.ID
                         + "'s vector failed the verification.");
                 disqualifyUser(user.ID);

@@ -688,10 +688,10 @@ public class UserVector2 extends UserVector implements Serializable{
      */
     private BigInteger[] Y = null;
     // The peer share of the checksums. Put it here for test
-    public boolean verify2(Proof proof) {
+    public boolean verify2(Proof proof, NativeBigInteger g, NativeBigInteger h) {
         L2NormBoundProof2 l2Proof = (L2NormBoundProof2)proof;
         if(l2Proof.isForServer())
-            return serverVerify(l2Proof, Y);
+            return serverVerify(l2Proof, Y, g, h);
         else
             return peerVerify(l2Proof);
     }
@@ -729,7 +729,9 @@ public class UserVector2 extends UserVector implements Serializable{
     }
 
 
-    public boolean serverVerify(L2NormBoundProof2 l2Proof, BigInteger[] Y) {
+    public boolean serverVerify(L2NormBoundProof2 l2Proof, BigInteger[] Y, NativeBigInteger g, NativeBigInteger h) {
+        this.g = g;
+        this.h = h;
         if(Y == null)
             throw new RuntimeException("Must perform peer verification first!");
 
@@ -764,18 +766,18 @@ public class UserVector2 extends UserVector implements Serializable{
             }
 
             // Now check if the modular correctors, the Bs, are computed correctly
-            if(!B[i].equals(tcProofs[i].getCommitment()[0])) {
-                System.out.println("B[" + i + "]"
-                        + " not computed correctly!");
-                return false;
-            }
+//            if(!B[i].equals(tcProofs[i].getCommitment()[0])) {
+//                System.out.println("B[" + i + "]"
+//                        + " not computed correctly!");
+//                return false;
+//            }
 
 //             Check the 3-way proofs
-            if(!tc.verify(tcProofs[i])) {
-                System.out.println("3-Way proof " + i
-                        + " not computed correctly!");
-                return false;
-            }
+//            if(!tc.verify(tcProofs[i])) {
+//                System.out.println("3-Way proof " + i
+//                        + " not computed correctly!");
+//                return false;
+//            }
 
             X[i] =
                     cm.commit(new BigInteger(new Long(x[i]).toString()).mod(P4PParameters.q),
