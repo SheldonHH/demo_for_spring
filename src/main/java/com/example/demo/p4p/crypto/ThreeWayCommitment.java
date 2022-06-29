@@ -41,6 +41,7 @@ import com.example.demo.p4p.util.StopWatch;
 import com.example.demo.p4p.util.Util;
 import com.example.demo.net.i2p.util.NativeBigInteger;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -68,16 +69,19 @@ public class ThreeWayCommitment extends Commitment implements Serializable{
 
     public ThreeWayCommitment(NativeBigInteger g, NativeBigInteger h,
                               BigInteger c) {
-        super(new NativeBigInteger("3459276026518079674568408512735917085876933054878224377582397778495423201743627684916338757642004215208935956214764216182555928533733818616652879775932081"), new NativeBigInteger("1815409602493030510804268646246184547552449386433387561905816534248675443892847368541434018303659631380097127756952567150690215332149993674119991116919571"));
+        super(g, h);
         this.CONST = new NativeBigInteger(c.abs());
     }
 
     public ThreeWayCommitment(@JsonProperty("g") NativeBigInteger g, @JsonProperty("h")NativeBigInteger h,
                               @JsonProperty("c") long c) {
-        super(new NativeBigInteger("3459276026518079674568408512735917085876933054878224377582397778495423201743627684916338757642004215208935956214764216182555928533733818616652879775932081"), new NativeBigInteger("1815409602493030510804268646246184547552449386433387561905816534248675443892847368541434018303659631380097127756952567150690215332149993674119991116919571"));
+        super(g, h);
         this.CONST = new NativeBigInteger(new BigInteger(String.valueOf(c)).abs());
     }
 
+    public NativeBigInteger[] getghconst(){
+        return new NativeBigInteger[]{g,h,CONST};
+    }
     /**
      */
     public BigInteger commit(BigInteger val) {
@@ -86,7 +90,7 @@ public class ThreeWayCommitment extends Commitment implements Serializable{
             throw new RuntimeException("ThreeWayCommitment.commit can only"
                     + "be invoked with 0 or +/-" + CONST);
         return super.commit(val);
-        // Commitment is smart enough to avoid doing 
+        // Commitment is smart enough to avoid doing
         // exponetiation if val is either 0 or 1.
     }
 
@@ -99,7 +103,7 @@ public class ThreeWayCommitment extends Commitment implements Serializable{
                     + "be invoked with 0 or +/-" + c);
 
         return super.commit(new BigInteger(String.valueOf(val)));
-        // Commitment is smart enough to avoid doing exponetiation 
+        // Commitment is smart enough to avoid doing exponetiation
         // if val is either 0 or 1.
     }
 
@@ -110,7 +114,7 @@ public class ThreeWayCommitment extends Commitment implements Serializable{
                     + "be invoked with 0 or +/-" + c);
 
         return super.commit(new BigInteger(String.valueOf(val)), r);
-        // Commitment is smart enough to avoid doing exponetiation 
+        // Commitment is smart enough to avoid doing exponetiation
         // if val is either 0 or 1.
     }
 
@@ -118,7 +122,7 @@ public class ThreeWayCommitment extends Commitment implements Serializable{
     // The verifier:
     /**
      * Verify if the given bit <code>val</code> is contained in the commitment
-     * <code>c</code>. All computations are done using the parameters of this 
+     * <code>c</code>. All computations are done using the parameters of this
      * commitment.
      */
     public boolean verify(BigInteger c, BigInteger val, BigInteger r) {
@@ -129,6 +133,7 @@ public class ThreeWayCommitment extends Commitment implements Serializable{
         return super.verify(c, val, r);
     }
 
+
     public Proof getProof() {
         ThreeWayCommitmentProof proof = new ThreeWayCommitmentProof();
         proof.construct();
@@ -136,15 +141,15 @@ public class ThreeWayCommitment extends Commitment implements Serializable{
     }
 
     /**
-     * A zero-knowledge proof that the commitment contains 0,or +/-c. The protocol 
+     * A zero-knowledge proof that the commitment contains 0,or +/-c. The protocol
      * is based on
      * <p>
-     *    <i>Yitao Duan and John Canny. Zero-knowledge Test of Vector 
+     *    <i>Yitao Duan and John Canny. Zero-knowledge Test of Vector
      *    Equivalence and Granulation of User Data with Privacy. In 2006
-     *    IEEE International Conference on Granular Computing (GrC 2006), 
+     *    IEEE International Conference on Granular Computing (GrC 2006),
      *    May 10 - 12, Atlanta, USA.</i>
      * <p>
-     * The proof essentially consists of two bit commitments <code>C1</code> and 
+     * The proof essentially consists of two bit commitments <code>C1</code> and
      * <code>C2</code> (and their proofs (<code>bc1</code> and <code>bc2</code>).
      * The 3-way commitment is just C1^{c}C2^{-c} mod p.
      */
@@ -153,14 +158,27 @@ public class ThreeWayCommitment extends Commitment implements Serializable{
         //BigInteger C1 = null;
         //BigInteger C2 = null;
         /**
-         * The first element in the BitCommitmentProof is the commitment 
+         * The first element in the BitCommitmentProof is the commitment
          * itself so we don't need to store the bit commitments.
          */
         private BitCommitment.BitCommitmentProof bcp1 = null;
         private BitCommitment.BitCommitmentProof bcp2 = null;
 
+        public void setNumeratorProof(BitCommitment.BitCommitmentProof bcp1) {
+            this.bcp1 = bcp1;
+        }
+
+
+        public void setDenominatorProof(BitCommitment.BitCommitmentProof bcp2) {
+            this.bcp2 = bcp2;
+        }
+
         @JsonCreator
         public ThreeWayCommitmentProof() { super(); }
+
+//        public ThreeWayCommitment getOuter(){
+//            return ThreeWayCommitment.this;
+//        }
 
         // Construct the ZKP that the commitment contains 0,or +/-c
         public void construct() {

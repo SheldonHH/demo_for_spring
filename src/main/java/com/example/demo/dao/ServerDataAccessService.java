@@ -10,6 +10,7 @@ import com.example.demo.p4p.server.P4PServer;
 import com.example.demo.p4p.sim.P4PSim;
 import com.example.demo.p4p.user.JointCommitments;
 import com.example.demo.p4p.user.UserVector2;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -131,12 +132,12 @@ public class ServerDataAccessService implements ServerDao{
             String scjson_str = jcs_json_str.substring(jcs_json_str.indexOf("!")+1,second_occurance);
             String tcjson_str = jcs_json_str.substring(second_occurance+1);
 
-            JsonArray scsArry = JsonParser.parseString(scjson_str).getAsJsonArray();
-            List<NativeBigInteger> A_list = new ArrayList<>();
-            List<NativeBigInteger> B_list = new ArrayList<>();
             Gson gson = new Gson();
+            JsonArray scsArry = JsonParser.parseString(scjson_str).getAsJsonArray();
+            SquareCommitment.SquareCommitmentProof[] scs_array = new SquareCommitment.SquareCommitmentProof[scsArry.size()];
+            int counter = 0;
             for(JsonElement pa: scsArry){
-
+                SquareCommitment.SquareCommitmentProof inner_s = null;
                 JsonObject scObject = pa.getAsJsonObject();
                 JsonArray sg = scObject.get("abgh").getAsJsonArray();
                 NativeBigInteger A = new NativeBigInteger(sg.get(0).getAsString());
@@ -151,17 +152,40 @@ public class ServerDataAccessService implements ServerDao{
                 BigInteger sb = new BigInteger(scObject.get("sb").getAsString());
                 SquareCommitment sc = new SquareCommitment(g,h,a,b,A,B,sa, sb);
                 JsonObject json_scp = scObject.get("proof").getAsJsonObject();
+                inner_s = sc.new SquareCommitmentProof();
                 SquareCommitment.SquareCommitmentProof au = gson.fromJson(json_scp, SquareCommitment.SquareCommitmentProof.class);
-//                sc.getProof() = au;
-//                SquareCommitment.SquareCommitmentProof =new Proof(au.getCommitment(),au.getChallenge(),au.setResponse());
-                SquareCommitment.SquareCommitmentProof inner = sc.new SquareCommitmentProof();
-                inner.setCommitment(au.getCommitment());
-                inner.setChallenge(au.getChallenge());
-                inner.setResponse(au.getResponse());
+                inner_s.setCommitment(au.getCommitment());
+                inner_s.setChallenge(au.getChallenge());
+                inner_s.setResponse(au.getResponse());
                 System.out.println("innere");
-
+                scs_array[counter] = inner_s;
+                counter++;
 //                SquareCommitment.SquareCommitmentProof  scp_json = json_scp;
-        }
+            }
+
+            JsonArray tcsArry = JsonParser.parseString(tcjson_str).getAsJsonArray();
+            ThreeWayCommitment.ThreeWayCommitmentProof[] tcs_array = new ThreeWayCommitment.ThreeWayCommitmentProof[tcsArry.size()];
+            counter = 0;
+             for(JsonElement pa: tcsArry){
+                ThreeWayCommitment.ThreeWayCommitmentProof inner_t = null;
+                JsonObject tcObject = pa.getAsJsonObject();
+                NativeBigInteger g = new NativeBigInteger(tcObject.get("ghconst").getAsJsonArray().get(0).getAsString());
+                NativeBigInteger h = new NativeBigInteger(tcObject.get("ghconst").getAsJsonArray().get(1).getAsString());
+                NativeBigInteger CONST = new NativeBigInteger(tcObject.get("ghconst").getAsJsonArray().get(2).getAsString());
+
+                JsonObject json_tcp = tcObject.get("proof").getAsJsonObject();
+                ThreeWayCommitment tc = new ThreeWayCommitment(g,h,CONST);
+                inner_t = tc.new ThreeWayCommitmentProof();
+                ThreeWayCommitment.ThreeWayCommitmentProof au = gson.fromJson(json_tcp, ThreeWayCommitment.ThreeWayCommitmentProof.class);
+                inner_t.setCommitment(au.getCommitment());
+                inner_t.setChallenge(au.getChallenge());
+                inner_t.setResponse(au.getResponse());
+                inner_t.setNumeratorProof(gson.fromJson(json_tcp.get("numeratorProof"), BitCommitment.BitCommitmentProof.class));
+                inner_t.setDenominatorProof(gson.fromJson(json_tcp.get("denominatorProof"), BitCommitment.BitCommitmentProof.class));
+                System.out.println("innere");
+                tcs_array[counter++] = inner_t;
+            }
+
 
 
 //            JsonObject locObj = rootObj.getAsJsonObject("abgh");

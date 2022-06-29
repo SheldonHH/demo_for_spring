@@ -41,20 +41,20 @@ import com.example.demo.p4p.util.P4PParameters;
 import com.example.demo.p4p.util.StopWatch;
 import com.example.demo.p4p.util.Util;
 import com.example.demo.net.i2p.util.NativeBigInteger;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * This is a bit commitment. It only allows committing to the value of either 0
- * or 1, i.e. a bit. The class also includes a ZKP that proves that the 
+ * or 1, i.e. a bit. The class also includes a ZKP that proves that the
  * commmitment contains either 0 or 1.
  *
  * @author ET 08/28/2005
  */
-
 public class BitCommitment extends Commitment implements Serializable{
     private static final long serialVersionUID = 6529685098267757690L;
+
     public BitCommitment(NativeBigInteger g, NativeBigInteger h) {
-        super(new NativeBigInteger("3459276026518079674568408512735917085876933054878224377582397778495423201743627684916338757642004215208935956214764216182555928533733818616652879775932081"), new NativeBigInteger("1815409602493030510804268646246184547552449386433387561905816534248675443892847368541434018303659631380097127756952567150690215332149993674119991116919571"));
+        super(g, h);
     }
 
     /**
@@ -65,11 +65,13 @@ public class BitCommitment extends Commitment implements Serializable{
             throw new IllegalArgumentException("BitCommitment.commit can only"
                     + "be invoked with 0 or 1!");
         return super.commit(val);
-        // Commitment is smart enough to avoid doing 
+        // Commitment is smart enough to avoid doing
         // exponetiation if val is either 0 or 1.
     }
 
-
+    public NativeBigInteger[] getgh(){
+        return new NativeBigInteger[]{g,h};
+    }
     /**
      * Commit to a bit
      */
@@ -79,7 +81,7 @@ public class BitCommitment extends Commitment implements Serializable{
                     + "be invoked with 0 or 1!");
 
         return super.commit(new BigInteger(String.valueOf(val)));
-        // Commitment is smart enough to avoid doing exponetiation 
+        // Commitment is smart enough to avoid doing exponetiation
         // if val is either 0 or 1.
     }
 
@@ -89,7 +91,7 @@ public class BitCommitment extends Commitment implements Serializable{
                     + "be invoked with 0 or 1!");
 
         return super.commit(new BigInteger(String.valueOf(val)), r);
-        // Commitment is smart enough to avoid doing exponetiation 
+        // Commitment is smart enough to avoid doing exponetiation
         // if val is either 0 or 1.
     }
 
@@ -110,7 +112,7 @@ public class BitCommitment extends Commitment implements Serializable{
     // The verifier:
     /**
      * Verify if the given bit <code>val</code> is contained in the commitment
-     * <code>c</code>. All computations are done using the parameters of this 
+     * <code>c</code>. All computations are done using the parameters of this
      * commitment.
      */
     public boolean verify(BigInteger c, BigInteger val, BigInteger r) {
@@ -126,7 +128,6 @@ public class BitCommitment extends Commitment implements Serializable{
         return proof;
     }
 
-
     // f(r) = h^r. The onw way group homomorphism
     public BigInteger f(BigInteger i){
         return h.modPow(i, P4PParameters.p);
@@ -134,18 +135,19 @@ public class BitCommitment extends Commitment implements Serializable{
 
 
     /**
-     * A zero-knowledge proof that the commitment contains a bit. The protocol 
+     * A zero-knowledge proof that the commitment contains a bit. The protocol
      * is based on the f-preimage proof of
      * <p>
-     *     <i>Ronald Cramer, Ivan Damg\aard, Zero-Knowledge Proofs for Finite 
-     *     Field Arithmetic or: Can Zero-Knowledge Be for Free?, Lecture Notes 
+     *     <i>Ronald Cramer, Ivan Damg\aard, Zero-Knowledge Proofs for Finite
+     *     Field Arithmetic or: Can Zero-Knowledge Be for Free?, Lecture Notes
      *     in Computer Science, Volume 1462, Jan 1998, Page 424</i>
      */
-//    @JsonDeserialize(as=BitCommitment.BitCommitmentProof.class)
     public class BitCommitmentProof extends Proof implements Serializable{
         private static final long serialVersionUID = 6529685098267757690L;
         public BitCommitmentProof() { super(); }
-
+        //        public BitCommitment getOuter(){
+//            return BitCommitment.this;
+//        }
         // Construct the ZKP that the commitment contains a bit
         public void construct() {
             if(val == null)
@@ -155,9 +157,9 @@ public class BitCommitment extends Commitment implements Serializable{
             commitment = new BigInteger[3];
             commitment[0] = new NativeBigInteger(commit(val, r));
             /**
-             * The first element is the commitment itself. Note we must use our 
-             * own randomness here since we already committed to a bit. 
-             * Otherwise we will get a different commitment and the verifier 
+             * The first element is the commitment itself. Note we must use our
+             * own randomness here since we already committed to a bit.
+             * Otherwise we will get a different commitment and the verifier
              * may get confused (it depends on the homomorphism).
              */
             challenge = new BigInteger[1];
@@ -178,12 +180,12 @@ public class BitCommitment extends Commitment implements Serializable{
                 m0 = f(v);
 
                 /**
-                 * Note: NativeBigInteger seems to be unable to handle negative 
-                 * exponents properly. We should avoid using 
+                 * Note: NativeBigInteger seems to be unable to handle negative
+                 * exponents properly. We should avoid using
                  * modPow(e1.negate(), p) before we fix the implementation.
                  */
                 BigInteger t = (commitment[0].modInverse(P4PParameters.p)).modPow(e1, P4PParameters.p);
-                // c^ -e1 
+                // c^ -e1
                 t = t.multiply(g.modPow(e1, P4PParameters.p));
                 m1 = (t.multiply(f(z1))).mod(P4PParameters.p); // f(z1) * c ^ (-e1) * g ^ e1
 
@@ -240,7 +242,7 @@ public class BitCommitment extends Commitment implements Serializable{
     /**
      * Verifies the given proof using our own parameters.
      *
-     * The ZKP should be passed to some verifier to verify. The verifier,  
+     * The ZKP should be passed to some verifier to verify. The verifier,
      * who does not have the values, should construct a fresh new commitment
      * and pass the proof to it. The verifier and the prover should use the
      * same parameters (e.g. g and h).
@@ -351,12 +353,8 @@ public class BitCommitment extends Commitment implements Serializable{
 
         // Setup the parameters:
         P4PParameters.initialize(k, false);
-//        NativeBigInteger g =  P4PParameters.getGenerator();
-//        NativeBigInteger h =  P4PParameters.getFreshGenerator();
-        NativeBigInteger g = new NativeBigInteger("3459276026518079674568408512735917085876933054878224377582397778495423201743627684916338757642004215208935956214764216182555928533733818616652879775932081");
-        NativeBigInteger h = new NativeBigInteger("1815409602493030510804268646246184547552449386433387561905816534248675443892847368541434018303659631380097127756952567150690215332149993674119991116919571");
-
-
+        NativeBigInteger g =  P4PParameters.getGenerator();
+        NativeBigInteger h =  P4PParameters.getFreshGenerator();
         // We should use the same generators for both the prover and the verifier.
 
         BitCommitment bc = new BitCommitment(g, h);
