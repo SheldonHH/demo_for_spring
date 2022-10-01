@@ -6,3 +6,5 @@ app:
     pool-size: 30
   flyway:
     baselineOnMigrate: true
+server:
+  port: 8081
