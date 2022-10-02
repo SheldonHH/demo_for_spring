@@ -6,7 +6,10 @@ import lombok.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.UUID;
+
+import static com.example.demo.dao.ServerDataAccessService.userNameMap;
 
 @RequestMapping("api/v1/server")
 @RestController
@@ -20,7 +23,12 @@ public class ServerController {
     @GetMapping("{uuidstr}")
     public String checkSig(@PathVariable("uuidstr") String uuidstr){
         System.out.println(uuidstr.split("=")[1]);
-        System.out.println("Hi");
+        HashMap<String, String> userNameHashMap =
+                (userNameMap instanceof HashMap)
+                        ? (HashMap) userNameMap
+                        : new HashMap<String, String>(userNameMap);
+        System.out.println(userNameHashMap.get(uuidstr));
+        System.out.println("⬆️CheckSig⬆️");
         UUID personID = UUID.fromString(uuidstr.split("=")[1]);
         System.out.println(serverService.checkSig(personID));
         return serverService.checkSig(personID);
@@ -29,7 +37,11 @@ public class ServerController {
 
     @PostMapping("/cancel_ds")
     public void cancelDS(@Valid @NonNull @RequestBody UUID person_id){
-        System.out.println("I am here");
+        HashMap<String, String> userNameHashMap =
+                (userNameMap instanceof HashMap)
+                        ? (HashMap) userNameMap
+                        : new HashMap<String, String>(userNameMap);
+        System.out.println("cancelDS of "+userNameHashMap.get(person_id));
         serverService.cancelDS(person_id);
     }
 
