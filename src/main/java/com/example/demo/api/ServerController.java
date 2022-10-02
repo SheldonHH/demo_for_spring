@@ -22,12 +22,14 @@ public class ServerController {
 
     @GetMapping("{uuidstr}")
     public String checkSig(@PathVariable("uuidstr") String uuidstr){
-        System.out.println(uuidstr.split("=")[1]);
+        System.out.println("uuidstr: "+uuidstr);
+
+//        System.out.println(uuidstr.split("=")[1]);
         HashMap<String, String> userNameHashMap =
                 (userNameMap instanceof HashMap)
                         ? (HashMap) userNameMap
                         : new HashMap<String, String>(userNameMap);
-        System.out.println(userNameHashMap.get(uuidstr));
+        System.out.println(userNameHashMap.get(uuidstr.split("=")[1].toString()));
         System.out.println("⬆️CheckSig⬆️");
         UUID personID = UUID.fromString(uuidstr.split("=")[1]);
         System.out.println(serverService.checkSig(personID));
