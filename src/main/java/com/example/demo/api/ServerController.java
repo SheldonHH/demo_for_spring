@@ -42,7 +42,7 @@ public class ServerController {
 
     @PostMapping("/uiandproof")
     public void addUiandProof(@Valid @NonNull @RequestBody UiandProof uiandProof){
-        System.out.print("Here");
+        System.out.print("server controller receive request to add Ui and Proof");
         serverService.insertUiandProof(uiandProof);
     }
 

@@ -16,29 +16,29 @@ public class ServerApplication {
 		return DriverManager.getConnection(url, user, password);
 	}
 	public static void main(String[] args) {
-		truncateUPerson();
+//		truncateUPerson();
 		P4PParameters.initialize(512,true);
 		ServerDataAccessService.server.init();
 		SpringApplication.run(ServerApplication.class, args);
 	}
 
-	public static void truncateUPerson(){
-		String SQL = "TRUNCATE TABLE U_PERSON_DATA; ";
-		try (Connection conn = connect();
-			 PreparedStatement pstmt = conn.prepareStatement(SQL,
-					 Statement.RETURN_GENERATED_KEYS)) {
-			int affectedRows = pstmt.executeUpdate();
-			if (affectedRows > 0) {
-				try (ResultSet rs = pstmt.getGeneratedKeys()) {
-					System.out.println(rs);
-				} catch (SQLException ex) {
-					System.out.println(ex.getMessage());
-				}
-			}
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		}
-	}
+//	public static void truncateUPerson(){
+//		String SQL = "TRUNCATE TABLE U_PERSON_DATA; ";
+//		try (Connection conn = connect();
+//			 PreparedStatement pstmt = conn.prepareStatement(SQL,
+//					 Statement.RETURN_GENERATED_KEYS)) {
+//			int affectedRows = pstmt.executeUpdate();
+//			if (affectedRows > 0) {
+//				try (ResultSet rs = pstmt.getGeneratedKeys()) {
+//					System.out.println(rs);
+//				} catch (SQLException ex) {
+//					System.out.println(ex.getMessage());
+//				}
+//			}
+//		} catch (SQLException e) {
+//			System.out.println(e.getMessage());
+//			e.printStackTrace();
+//		}
+//	}
 
 }

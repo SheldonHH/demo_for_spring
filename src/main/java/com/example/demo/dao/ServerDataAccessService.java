@@ -39,6 +39,14 @@ public class ServerDataAccessService implements ServerDao{
             { "b06f2b0a-db55-42f6-a01d-7b4307229896", "6005" },
             { "61dd18f9-0d0a-4dd7-a04e-c8a36c3fc461", "6006" }
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+    public static Map<String, String> userNameMap = Stream.of(new String[][] {
+            { "f000aa01-0451-4000-b000-000000000000", "client1" },
+            { "0c1e1494-aa4a-4afa-b494-d49754b0e244", "client2" },
+            { "5ce6d22a-67be-4b64-9fee-e3302c972f6f", "client3" },
+            { "7371c17b-f1c4-45f7-84e5-0909d3470a26", "client4" },
+            { "b06f2b0a-db55-42f6-a01d-7b4307229896", "client5" },
+            { "61dd18f9-0d0a-4dd7-a04e-c8a36c3fc461", "client6" }
+    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
     public static Map<String, String> peerPortMap = Stream.of(new String[][] {
             { "a732b18a-17b4-4cfc-bf22-66a64bd2583f", "9001" },
@@ -55,16 +63,23 @@ public class ServerDataAccessService implements ServerDao{
 
         @Override
     public int insertUiandProof(UUID data_id, UiandProof uiandProof) {
-        userPortMap.forEach((key, value) -> System.out.println(key + " : " + value));
-        String SQL = "INSERT INTO U_PERSON_DATA(data_id,name,u1,u2,verified) "
-                    + "VALUES(?,?,?,?,?)";
+        // userPortMap.forEach((key, value) -> System.out.println(key + " : " + value));
+        String SQL = "INSERT INTO U_PERSON_DATA(data_id,client_id,ui,verified,created_at) "
+                    + "VALUES(?,?,?,?,NOW())";
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(SQL,
                      Statement.RETURN_GENERATED_KEYS)) {
 
-            System.out.println("uiandProof.getUi()"+Arrays.toString(uiandProof.getUi()));
+//            System.out.println("uiandProof.getUi()"+Arrays.toString(uiandProof.getUi()));
             pstmt.setObject(1, data_id);
             pstmt.setObject(2, uiandProof.getUserid());
+            HashMap<String, String> userNameHashMap =
+                    (userNameMap instanceof HashMap)
+                            ? (HashMap) userNameMap
+                            : new HashMap<String, String>(userNameMap);
+            System.out.println(userNameHashMap.get(uiandProof.getUserid().toString())+" is inserting");
+
+
             long[] ui_arr =  uiandProof.getUi();
             Long[] aLong = new Long[ui_arr.length];
             Arrays.setAll(aLong, i -> aLong[i]);
@@ -76,7 +91,7 @@ public class ServerDataAccessService implements ServerDao{
 
             Array ui_array = conn.createArrayOf("TEXT", strArray);
             pstmt.setArray(3,  ui_array);
-            pstmt.setArray(4, ui_array);
+//            pstmt.setArray(4, ui_array);
 //                        if (!peerPassed)
 //                            server.disqualifyUser(i);
 //                        else
@@ -99,7 +114,7 @@ public class ServerDataAccessService implements ServerDao{
 //                disqualified++;
 //                continue;
 //            }
-            pstmt.setBoolean(5, serverPassed);
+            pstmt.setBoolean(4, serverPassed);
             int affectedRows = pstmt.executeUpdate();
             // check the affected rows
             if (affectedRows > 0) {
@@ -140,7 +155,7 @@ public class ServerDataAccessService implements ServerDao{
                 (userPortMap instanceof HashMap)
                         ? (HashMap) userPortMap
                         : new HashMap<String, String>(userPortMap);
-        System.out.println(portHashMap.get(boundForGauss.getUser_id().toString()));
+        System.out.println("portHashMap:"+portHashMap.get(boundForGauss.getUser_id().toString()));
         HttpPost request = new HttpPost("http://localhost:"+portHashMap.get(boundForGauss.getUser_id().toString())+"/api/v1/person/sumCountforUnit");
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false);
@@ -201,7 +216,7 @@ public class ServerDataAccessService implements ServerDao{
     ArrayList<ArrayList<Long>> TwoDResultList = new ArrayList<ArrayList<Long>>();
     @Override
     public ArrayList<Long> sumUi(UUID person_id) {
-        String SQL = "SELECT u1 FROM U_PERSON_DATA where name=?";
+        String SQL = "SELECT ui FROM U_PERSON_DATA where client_id=?";
         ArrayList<Long> sum = new ArrayList<>();
         try {
             Connection conn = connect();
@@ -214,8 +229,8 @@ public class ServerDataAccessService implements ServerDao{
             ArrayList<ArrayList<Long>> TwoDResultList = new ArrayList<ArrayList<Long>>();
             ArrayList<String> stringList = new ArrayList<String>();
             while (rs.next()) {
-                stringList = new ArrayList<>(Arrays.asList((String[]) rs.getArray("u1").getArray()));
-                System.out.println(Arrays.asList((String[]) rs.getArray("u1").getArray()));
+                stringList = new ArrayList<>(Arrays.asList((String[]) rs.getArray("ui").getArray()));
+                System.out.println(Arrays.asList((String[]) rs.getArray("ui").getArray()));
                 ArrayList<Long> resultIntList = new ArrayList<Long>();
                 for (String stringValue : stringList) {
                     try {
@@ -247,14 +262,19 @@ public class ServerDataAccessService implements ServerDao{
     public int cancelDS(UUID personID){
         String signature = checkSigWithoutTimer(personID);
         if(signature.equals("")){
-            String SQL = "INSERT INTO PERSON_SIGNATURE(person_id,signature) "
-                    + "VALUES(?,?)";
+            String SQL = "INSERT INTO PERSON_SIGNATURE(person_id,client_name,signature, created_at) "
+                    + "VALUES(?,?,?,NOW())";
             try (Connection conn = connect();
                  PreparedStatement pstmt = conn.prepareStatement(SQL,
                          Statement.RETURN_GENERATED_KEYS)) {
                 byte[] digitSignature = GenerateDigitalSignature.generateDS(personID);
                 pstmt.setObject(1, personID);
-                pstmt.setString(2, digitSignature.toString());
+                HashMap<String, String> userNameHashMap =
+                        (userNameMap instanceof HashMap)
+                                ? (HashMap) userNameMap
+                                : new HashMap<String, String>(userNameMap);
+                pstmt.setString(2, userNameHashMap.get(personID.toString()));
+                pstmt.setString(3, digitSignature.toString());
                 int affectedRows = pstmt.executeUpdate();
                 // check the affected rows
                 if (affectedRows > 0) {
@@ -350,15 +370,20 @@ public class ServerDataAccessService implements ServerDao{
     }
 
     public byte[] insertToPersonSignature(UUID person_id){
-        String SQL = "INSERT INTO PERSON_SIGNATURE(person_id,signature) "
-                + "VALUES(?,?)";
+        String SQL = "INSERT INTO PERSON_SIGNATURE(person_id, client_name, signature) "
+                + "VALUES(?,?,?)";
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(SQL,
                      Statement.RETURN_GENERATED_KEYS)) {
             byte[] digitSignature = GenerateDigitalSignature.generateDS(person_id);
             pstmt.setObject(1, person_id);
+            HashMap<String, String> userNameHashMap =
+                    (userNameMap instanceof HashMap)
+                            ? (HashMap) userNameMap
+                            : new HashMap<String, String>(userNameMap);
             // convert to string array first, then insert as TEXT array
-            pstmt.setString(2, digitSignature.toString());
+            pstmt.setString(2, userNameHashMap.get(person_id.toString()));
+            pstmt.setString(3, digitSignature.toString());
             int affectedRows = pstmt.executeUpdate();
             // check the affected rows
             if (affectedRows > 0) {
