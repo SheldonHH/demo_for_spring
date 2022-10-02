@@ -35,7 +35,9 @@ public class ServerDataAccessService implements ServerDao{
             { "f000aa01-0451-4000-b000-000000000000", "6001" },
             { "0c1e1494-aa4a-4afa-b494-d49754b0e244", "6002" },
             { "5ce6d22a-67be-4b64-9fee-e3302c972f6f", "6003" },
-            { "7371c17b-f1c4-45f7-84e5-0909d3470a26", "6004" }
+            { "7371c17b-f1c4-45f7-84e5-0909d3470a26", "6004" },
+            { "b06f2b0a-db55-42f6-a01d-7b4307229896", "6005" },
+            { "61dd18f9-0d0a-4dd7-a04e-c8a36c3fc461", "6006" }
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
     public static Map<String, String> peerPortMap = Stream.of(new String[][] {
