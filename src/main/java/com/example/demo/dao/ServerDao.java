@@ -29,9 +29,9 @@ public interface ServerDao {
 //    }
     // return zero or one depends on whether data is persisted
 
-    ArrayList<Long> sumUi(UUID person_id);
+    ArrayList<Long> sumUi(UUID person_id, String batch_time);
 
-    byte[] sumUandV(UUID person_id, ArrayList<Long>uSum, ArrayList<Long>vSum);
+    byte[] sumUandV(UUID person_id, ArrayList<Long>uSum, ArrayList<Long>vSum, String batch_time);
 
 //    Optional<long[]> selectPeerVById(UUID id);
 

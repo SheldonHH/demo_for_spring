@@ -69,8 +69,8 @@ public class ServerDataAccessService implements ServerDao{
         @Override
     public int insertUiandProof(UUID data_id, UiandProof uiandProof) {
         // userPortMap.forEach((key, value) -> System.out.println(key + " : " + value));
-        String SQL = "INSERT INTO U_PERSON_DATA(data_id,client_id,ui,verified,created_at) "
-                    + "VALUES(?,?,?,?,NOW())";
+        String SQL = "INSERT INTO U_PERSON_DATA(data_id,client_id,ui,verified,created_at,batch_time) "
+                    + "VALUES(?,?,?,?,NOW(),?)";
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(SQL,
                      Statement.RETURN_GENERATED_KEYS)) {
@@ -82,13 +82,11 @@ public class ServerDataAccessService implements ServerDao{
                     (userNameMap instanceof HashMap)
                             ? (HashMap) userNameMap
                             : new HashMap<String, String>(userNameMap);
-            System.out.println(userNameHashMap.get(uiandProof.getUserid().toString())+" is inserting");
-
+            System.out.println(" "+userNameHashMap.get(uiandProof.getUserid().toString())+" is inserting");
 
             long[] ui_arr =  uiandProof.getUi();
             Long[] aLong = new Long[ui_arr.length];
             Arrays.setAll(aLong, i -> aLong[i]);
-
             // convert to string array first, then insert as TEXT array
             String[] strArray = Arrays.stream(ui_arr)
                     .mapToObj(String::valueOf)
@@ -120,6 +118,7 @@ public class ServerDataAccessService implements ServerDao{
 //                continue;
 //            }
             pstmt.setBoolean(4, serverPassed);
+            pstmt.setString(5, uiandProof.getBatch_timestamp());
             int affectedRows = pstmt.executeUpdate();
             // check the affected rows
             if (affectedRows > 0) {
@@ -197,14 +196,14 @@ public class ServerDataAccessService implements ServerDao{
         System.out.println("vSum.getPeerID()"+vSum.getPeerID());
         System.out.println("vSum.getPerson()"+vSum.getPersonID());
         System.out.println("vSum.getV_sum()"+vSum.getV_sum());
-        ArrayList<Long> sumU = sumUi(vSum.getPersonID());
+        ArrayList<Long> sumU = sumUi(vSum.getPersonID(), vSum.getBatch_time());
 
         System.out.print("digital signature is: ");
 
         if(vSum.getV_sum().size() == 0){
             System.out.println("vSum is empty");
         }else{
-            System.out.println(sumUandV(person_ID, sumU, vSum.getV_sum()));
+            System.out.println("call function sumUandV: "+sumUandV(person_ID, sumU, vSum.getV_sum(), vSum.getBatch_time()));
         }
         return 0;
     }
@@ -220,8 +219,8 @@ public class ServerDataAccessService implements ServerDao{
 
     ArrayList<ArrayList<Long>> TwoDResultList = new ArrayList<ArrayList<Long>>();
     @Override
-    public ArrayList<Long> sumUi(UUID person_id) {
-        String SQL = "SELECT ui FROM U_PERSON_DATA where client_id=?";
+    public ArrayList<Long> sumUi(UUID person_id, String batch_time) {
+        String SQL = "SELECT ui FROM U_PERSON_DATA where client_id=? and batch_time=?";
         ArrayList<Long> sum = new ArrayList<>();
         try {
             Connection conn = connect();
@@ -267,8 +266,8 @@ public class ServerDataAccessService implements ServerDao{
     public int cancelDS(UUID personID){
         String signature = checkSigWithoutTimer(personID);
         if(signature.equals("")){
-            String SQL = "INSERT INTO PERSON_SIGNATURE(person_id,client_name,signature, created_at) "
-                    + "VALUES(?,?,?,NOW())";
+            String SQL = "INSERT INTO PERSON_SIGNATURE(person_id,client_name,signature,created_at,batch_time) "
+                    + "VALUES(?,?,?,NOW(),?)";
             try (Connection conn = connect();
                  PreparedStatement pstmt = conn.prepareStatement(SQL,
                          Statement.RETURN_GENERATED_KEYS)) {
@@ -280,6 +279,7 @@ public class ServerDataAccessService implements ServerDao{
                                 : new HashMap<String, String>(userNameMap);
                 pstmt.setString(2, userNameHashMap.get(personID.toString()));
                 pstmt.setString(3, digitSignature.toString());
+                pstmt.setString(4, "batch_time cancelDS");
                 int affectedRows = pstmt.executeUpdate();
                 // check the affected rows
                 if (affectedRows > 0) {
@@ -374,9 +374,9 @@ public class ServerDataAccessService implements ServerDao{
         return signature;
     }
 
-    public byte[] insertToPersonSignature(UUID person_id){
-        String SQL = "INSERT INTO PERSON_SIGNATURE(person_id, client_name, signature) "
-                + "VALUES(?,?,?)";
+    public byte[] insertToPersonSignature(UUID person_id, String batch_time){
+        String SQL = "INSERT INTO PERSON_SIGNATURE(person_id, client_name, signature, created_at, batch_time) "
+                + "VALUES(?,?,?, NOW(), ?)";
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(SQL,
                      Statement.RETURN_GENERATED_KEYS)) {
@@ -389,6 +389,7 @@ public class ServerDataAccessService implements ServerDao{
             // convert to string array first, then insert as TEXT array
             pstmt.setString(2, userNameHashMap.get(person_id.toString()));
             pstmt.setString(3, digitSignature.toString());
+            pstmt.setString(4, batch_time);
             int affectedRows = pstmt.executeUpdate();
             // check the affected rows
             if (affectedRows > 0) {
@@ -406,7 +407,7 @@ public class ServerDataAccessService implements ServerDao{
         return GenerateDigitalSignature.generateDS(person_id);
     }
     @Override
-    public byte[] sumUandV(UUID person_id, ArrayList<Long> uSum, ArrayList<Long> vSum) {
+    public byte[] sumUandV(UUID person_id, ArrayList<Long> uSum, ArrayList<Long> vSum, String batch_time) {
         ArrayList<Long> dSum = new ArrayList<>();
         for(int i = 0; i<uSum.size(); i++) {
             dSum.add(uSum.get(i)+vSum.get(i));
@@ -414,11 +415,12 @@ public class ServerDataAccessService implements ServerDao{
         System.out.println("dSum:"+dSum);
         String signature = "";
         byte[] signature_byte_array = new byte[]{};
-        String selectionSQL = "SELECT * from PERSON_SIGNATURE where person_id = ?";
+        String selectionSQL = "SELECT * from PERSON_SIGNATURE where person_id = ? and batch_time = ?";
         try {
             Connection conn = connect();
             PreparedStatement preparedStatement = conn.prepareStatement(selectionSQL);
             preparedStatement.setObject(1, person_id);
+            preparedStatement.setString(2, batch_time);
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
 //                UUID person_id = (UUID) rs.getObject("person_id");
@@ -429,7 +431,7 @@ public class ServerDataAccessService implements ServerDao{
             }
             if(!signature.equals("None") && signature.equals("")){
                 System.out.println("signature:::::"+signature);
-                signature_byte_array = insertToPersonSignature(person_id);
+                signature_byte_array = insertToPersonSignature(person_id, batch_time);
             }
 
         } catch (SQLException ex) {
