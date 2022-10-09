@@ -17,8 +17,8 @@ public class ServerService {
         this.serverDao = serverDao;
     }
 
-    public int cancelDS(UUID personID) { return serverDao.cancelDS(personID); }
-    public String checkSig(UUID personID){return serverDao.checkSig(personID); }
+    public int cancelDS(PersonCount personCount) { return serverDao.cancelDS(personCount); }
+    public String checkSig(PersonCount personCount){return serverDao.checkSig(personCount); }
     public int insertUiandProof(UiandProof uiandProof) {
         return serverDao.insertUiandProof(uiandProof);
     }

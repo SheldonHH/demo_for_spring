@@ -20,31 +20,51 @@ public class ServerController {
         this.serverService = serverService;
     }
 
-    @GetMapping("{uuidstr}")
-    public String checkSig(@PathVariable("uuidstr") String uuidstr){
-        System.out.println("uuidstr: "+uuidstr);
+//    @GetMapping("{uuidstr}")
+//    public String checkSig(@PathVariable("uuidstr") String uuidstr){
+//        System.out.println("uuidstr: "+uuidstr);
+//
+////        System.out.println(uuidstr.split("=")[1]);
+//        HashMap<String, String> userNameHashMap =
+//                (userNameMap instanceof HashMap)
+//                        ? (HashMap) userNameMap
+//                        : new HashMap<String, String>(userNameMap);
+//        System.out.println(userNameHashMap.get(uuidstr.split("=")[1].toString()));
+//        System.out.println("⬆️CheckSig⬆️");
+//        UUID personID = UUID.fromString(uuidstr.split("=")[1]);
+//        String batch_time = uuidstr.split("=")[2];
+//        System.out.println(serverService.checkSig(new PersonCount(-1, personID, batch_time)));
+//        return serverService.checkSig((new PersonCount(-1, personID, batch_time)));
+////        return "";
+//    }
 
-//        System.out.println(uuidstr.split("=")[1]);
-        HashMap<String, String> userNameHashMap =
-                (userNameMap instanceof HashMap)
-                        ? (HashMap) userNameMap
-                        : new HashMap<String, String>(userNameMap);
-        System.out.println(userNameHashMap.get(uuidstr.split("=")[1].toString()));
-        System.out.println("⬆️CheckSig⬆️");
-        UUID personID = UUID.fromString(uuidstr.split("=")[1]);
-        System.out.println(serverService.checkSig(personID));
-        return serverService.checkSig(personID);
+    @PostMapping("/check_sig")
+    public String checkSig(@Valid @NonNull @RequestBody PersonCount personCount){
+//        System.out.println("uuidstr: "+personCount.getPerson_ID());
+//
+////        System.out.println(uuidstr.split("=")[1]);
+//        HashMap<String, String> userNameHashMap =
+//                (userNameMap instanceof HashMap)
+//                        ? (HashMap) userNameMap
+//                        : new HashMap<String, String>(userNameMap);
+//        System.out.println(userNameHashMap.get(uuidstr.split("=")[1].toString()));
+//        System.out.println("⬆️CheckSig⬆️");
+//        UUID personID = UUID.fromString(uuidstr.split("=")[1]);
+//        String batch_time = uuidstr.split("=")[2];
+        System.out.println(serverService.checkSig(personCount));
+        return serverService.checkSig(personCount);
 //        return "";
     }
 
+
     @PostMapping("/cancel_ds")
-    public void cancelDS(@Valid @NonNull @RequestBody UUID person_id){
+    public void cancelDS(@Valid @NonNull @RequestBody PersonCount personCount){
         HashMap<String, String> userNameHashMap =
                 (userNameMap instanceof HashMap)
                         ? (HashMap) userNameMap
                         : new HashMap<String, String>(userNameMap);
-        System.out.println("cancelDS of "+userNameHashMap.get(person_id));
-        serverService.cancelDS(person_id);
+        System.out.println("cancelDS of "+userNameHashMap.get(personCount.getPerson_ID()));
+        serverService.cancelDS(personCount);
     }
 
 

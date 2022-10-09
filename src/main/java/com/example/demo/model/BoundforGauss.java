@@ -6,6 +6,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.UUID;
 
+
 public class BoundforGauss {
     UUID user_id;
     public long maxX1;
@@ -14,22 +15,32 @@ public class BoundforGauss {
     public long minX2;
     String gaussian_params;
     ArrayList<String> availGaussUnits;
+    String batch_time;
 
-    public ArrayList<String> getAvailGaussUnits() {
-        return availGaussUnits;
-    }
-
-    public void setAvailGaussUnits(ArrayList<String> availGaussUnits) {
-        this.availGaussUnits = availGaussUnits;
-    }
-
-    public BoundforGauss(@JsonProperty("user_id") UUID user_id, @JsonProperty("maxX1") long maxX1, @JsonProperty("maxX2")long maxX2, @JsonProperty("minX1") long minX1, @JsonProperty("minX2")long minX2, @JsonProperty("gaussian_params")String gaussian_params, @JsonProperty("availGaussUnits")ArrayList<String> availGaussUnits) {
+    public BoundforGauss(@JsonProperty("user_id") UUID user_id, @JsonProperty("maxX1") long maxX1, @JsonProperty("maxX2") long maxX2, @JsonProperty("minX1") long minX1, @JsonProperty("minX2") long minX2, @JsonProperty("gaussian_params") String gaussian_params, @JsonProperty("availGaussUnits") ArrayList<String> availGaussUnits, @JsonProperty("batch_time") String batch_time) {
         this.user_id = user_id;
         this.maxX1 = maxX1;
         this.maxX2 = maxX2;
         this.minX1 = minX1;
         this.minX2 = minX2;
         this.gaussian_params = gaussian_params;
+        this.availGaussUnits = availGaussUnits;
+        this.batch_time = batch_time;
+    }
+
+    public String getBatch_time() {
+        return batch_time;
+    }
+
+    public void setBatch_time(String batch_time) {
+        this.batch_time = batch_time;
+    }
+
+    public ArrayList<String> getAvailGaussUnits() {
+        return availGaussUnits;
+    }
+
+    public void setAvailGaussUnits(ArrayList<String> availGaussUnits) {
         this.availGaussUnits = availGaussUnits;
     }
 

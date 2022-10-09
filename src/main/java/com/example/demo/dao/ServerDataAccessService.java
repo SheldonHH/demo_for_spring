@@ -2,14 +2,12 @@ package com.example.demo.dao;
 
 import com.example.demo.model.*;
 import com.example.demo.model.signature.GenerateDigitalSignature;
-import com.example.demo.p4p.crypto.ThreeWayCommitment;
 import com.example.demo.p4p.server.P4PServer;
 import com.example.demo.p4p.sim.P4PSim;
 import com.example.demo.p4p.user.UserVector2;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -21,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
+import java.util.Date;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -146,6 +145,7 @@ public class ServerDataAccessService implements ServerDao{
         System.out.println(boundForGauss.getGaussian_params());
         System.out.println(boundForGauss.getAvailGaussUnits());
         ArrayList<String> availGaussUnits =  boundForGauss.getAvailGaussUnits();
+        String batch_time = boundForGauss.getBatch_time();
 
         int index = (int)(Math.random() * availGaussUnits.size());
         System.out.println("Chosed Element is :" + availGaussUnits.get(index));
@@ -164,10 +164,11 @@ public class ServerDataAccessService implements ServerDao{
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false);
         try {
-            StringEntity  json = new StringEntity(mapper.writeValueAsString(availGaussUnits.get(index)), ContentType.APPLICATION_JSON);
+            StringEntity json = new StringEntity(mapper.writeValueAsString(new RequestUnitRange(""+availGaussUnits.get(index),batch_time)), ContentType.APPLICATION_JSON);
             request.setEntity(json);
             CloseableHttpResponse response = httpClient.execute(request);
             if(response.getStatusLine().getStatusCode() != 200){
+                System.out.println("response:"+response);
                 System.out.println("Student is not added! "+response.getStatusLine().getStatusCode() );
             }
             response.close();
@@ -228,6 +229,7 @@ public class ServerDataAccessService implements ServerDao{
             System.out.println("person_id:"+person_id);
             //TODO: change to UUID tyope
             preparedStatement.setString(1,person_id.toString());
+            preparedStatement.setString(2,batch_time);
             ResultSet rs = preparedStatement.executeQuery();
 
             ArrayList<ArrayList<Long>> TwoDResultList = new ArrayList<ArrayList<Long>>();
@@ -263,23 +265,23 @@ public class ServerDataAccessService implements ServerDao{
     }
 
     @Override
-    public int cancelDS(UUID personID){
-        String signature = checkSigWithoutTimer(personID);
+    public int cancelDS(PersonCount personCount){
+        String signature = checkSigWithoutTimer(personCount);
         if(signature.equals("")){
             String SQL = "INSERT INTO PERSON_SIGNATURE(person_id,client_name,signature,created_at,batch_time) "
                     + "VALUES(?,?,?,NOW(),?)";
             try (Connection conn = connect();
                  PreparedStatement pstmt = conn.prepareStatement(SQL,
                          Statement.RETURN_GENERATED_KEYS)) {
-                byte[] digitSignature = GenerateDigitalSignature.generateDS(personID);
-                pstmt.setObject(1, personID);
+                byte[] digitSignature = GenerateDigitalSignature.generateDS(personCount.getPerson_ID());
+                pstmt.setObject(1, personCount.getPerson_ID());
                 HashMap<String, String> userNameHashMap =
                         (userNameMap instanceof HashMap)
                                 ? (HashMap) userNameMap
                                 : new HashMap<String, String>(userNameMap);
-                pstmt.setString(2, userNameHashMap.get(personID.toString()));
+                pstmt.setString(2, userNameHashMap.get(personCount.getPerson_ID().toString()));
                 pstmt.setString(3, digitSignature.toString());
-                pstmt.setString(4, "batch_time cancelDS");
+                pstmt.setString(4, personCount.getBatch_time());
                 int affectedRows = pstmt.executeUpdate();
                 // check the affected rows
                 if (affectedRows > 0) {
@@ -297,13 +299,16 @@ public class ServerDataAccessService implements ServerDao{
         }else{
             String SQL = "UPDATE PERSON_SIGNATURE "
                     + "SET signature = ? "
-                    + "WHERE person_id = ?";
+                    + "WHERE person_id = ? and batch_time = ?";
             try (Connection conn = connect();
                  PreparedStatement pstmt = conn.prepareStatement(SQL,
                          Statement.RETURN_GENERATED_KEYS)) {
-                byte[] digitSignature = GenerateDigitalSignature.generateDS(personID);
-                pstmt.setString(1, "None");
-                pstmt.setObject(2, personID);
+                byte[] digitSignature = GenerateDigitalSignature.generateDS(personCount.getPerson_ID());
+                java.util.Date date = new Date();
+                String batch_time =  new Timestamp(date.getTime()).toString();
+                pstmt.setString(1, "Canceled DS in :"+batch_time);
+                pstmt.setObject(2, personCount.getPerson_ID());
+                pstmt.setString(3, personCount.getBatch_time());
                 int affectedRows = pstmt.executeUpdate();
                 // check the affected rows
                 if (affectedRows > 0) {
@@ -322,13 +327,14 @@ public class ServerDataAccessService implements ServerDao{
         return 0;
     }
 
-    public String checkSigWithoutTimer(UUID personID){
+    public String checkSigWithoutTimer(PersonCount personCount){
         String signature = "";
-        String selectionSQL = "SELECT * from PERSON_SIGNATURE where person_id = ?";
+        String selectionSQL = "SELECT * from PERSON_SIGNATURE where person_id = ? and batch_time = ?";
         try {
             Connection conn = connect();
             PreparedStatement preparedStatement = conn.prepareStatement(selectionSQL);
-            preparedStatement.setObject(1, personID);
+            preparedStatement.setObject(1, personCount.getPerson_ID());
+            preparedStatement.setString(2, personCount.getBatch_time());
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
                 UUID person_id = (UUID) rs.getObject("person_id");
@@ -345,13 +351,14 @@ public class ServerDataAccessService implements ServerDao{
     }
 
     @Override
-    public String checkSig(UUID personID){
+    public String checkSig(PersonCount personCount){
         String signature = "";
-        String selectionSQL = "SELECT * from PERSON_SIGNATURE where person_id = ?";
+        String selectionSQL = "SELECT * from PERSON_SIGNATURE where person_id = ? and batch_time = ?";
             try {
                 Connection conn = connect();
                 PreparedStatement preparedStatement = conn.prepareStatement(selectionSQL);
-                preparedStatement.setObject(1, personID);
+                preparedStatement.setObject(1, personCount.getPerson_ID());
+                preparedStatement.setString(2, personCount.getBatch_time());
                 ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
                 UUID person_id = (UUID) rs.getObject("person_id");
