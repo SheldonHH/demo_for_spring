@@ -51,10 +51,12 @@ public class ServerDataAccessService implements ServerDao{
     public static Map<String, String> peerNameMap = Stream.of(new String[][] {
             { "a732b18a-17b4-4cfc-bf22-66a64bd2583f", "peer1" },
             { "5ce6d22a-67be-4b64-9fee-e3302c972f6f", "peer2" },
+            { "9ff9e1fa-9d74-4968-8794-f27a98f05b45", "peer3" },
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
     public static Map<String, String> peerPortMap = Stream.of(new String[][] {
             { "a732b18a-17b4-4cfc-bf22-66a64bd2583f", "9001" },
             { "5ce6d22a-67be-4b64-9fee-e3302c972f6f", "9002" },
+            { "9ff9e1fa-9d74-4968-8794-f27a98f05b45", "9003" },
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
 
